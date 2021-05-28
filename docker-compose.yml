@@ -10,8 +10,7 @@ services:
       - "-ecx"
       - >
         /nakama/nakama migrate up --database.address "${DB}" &&
-        exec /nakama/nakama --console.password "${PW}"" --name nakama1 --database.address "${DB}" --logger.level DEBUG --session.token_expiry_sec 7200 --metrics.prometheus_port 9100
-    restart: "no"
+        exec /nakama/nakama --console.password "${PW}" --name nakama1 --database.address "${DB}" --logger.level DEBUG --session.token_expiry_sec 7200 --metrics.prometheus_port 9100
     volumes:
       - data:/nakama/data
       - ./cc-ca.crt:/cc-ca.crt
