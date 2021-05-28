@@ -1,0 +1,50 @@
+version: '3'
+services:
+  nakama:
+    image: heroiclabs/nakama:3.3.0
+    environment:
+      - DB=${NAKAMA_DB}
+      - PW=${ADMIN_PW}
+    entrypoint:
+      - "/bin/sh"
+      - "-ecx"
+      - >
+        /nakama/nakama migrate up --database.address "${DB}" &&
+        exec /nakama/nakama --console.password "${PW}"" --name nakama1 --database.address "${DB}" --logger.level DEBUG --session.token_expiry_sec 7200 --metrics.prometheus_port 9100
+    restart: "no"
+    volumes:
+      - data:/nakama/data
+      - ./cc-ca.crt:/cc-ca.crt
+    expose:
+      - "7349"
+      - "7350"
+      - "7351"
+      - "9100"
+    ports:
+      - "7349:7349"
+      - "7350:7350"
+      - "7351:7351"
+  prometheus:
+    image: prom/prometheus
+    entrypoint: /bin/sh -c
+    command: |
+      'sh -s <<EOF
+        cat > ./prometheus.yml <<EON
+      global:
+        scrape_interval:     15s
+        evaluation_interval: 15s
+      scrape_configs:
+        - job_name: prometheus
+          static_configs:
+          - targets: ['localhost:9090']
+        - job_name: nakama
+          metrics_path: /
+          static_configs:
+          - targets: ['nakama:9100']
+      EON
+      prometheus --config.file=./prometheus.yml
+      EOF'
+    ports:
+      - '9090:9090'
+volumes:
+  data:

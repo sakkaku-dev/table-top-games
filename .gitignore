@@ -1,0 +1,3 @@
+*.crt
+*.config
+nakama-config.yml
