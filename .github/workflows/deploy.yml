@@ -8,10 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: okteto/login@master
-        with:
-          token: ${{ secrets.OKTETO_TOKEN }}
       - env:
           CERT: ${{ secrets.DB_CERT }}
-        run: echo -n "$CERT" | base64 --decode > cc-ca.crt
+          CONFIG: ${{ secrets.OKTETO_CONFIG }}
+        run: |
+          echo -n "$CERT" | base64 --decode > cc-ca.crt
+          echo -n "$CONFIG" | base64 --decode > okteto-kube.config
       - uses: okteto/deploy-stack@master
+        env: 
+          KUBECONFIG: ./okteto-kube.config
