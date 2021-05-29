@@ -17,9 +17,6 @@ jobs:
         run: |
           echo -n "$CERT" | base64 --decode > cc-ca.crt
           echo -n "$CONFIG" | base64 --decode > okteto-kube.config
-      - uses: okteto/namespace@master
-        with:
-          namespace: table-top-games
       - uses: okteto/deploy-stack@master
         env: 
           KUBECONFIG: ./okteto-kube.config

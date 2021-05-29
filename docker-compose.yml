@@ -1,4 +1,5 @@
 version: '3'
+name: table-top-games
 services:
   nakama:
     image: heroiclabs/nakama:3.3.0
