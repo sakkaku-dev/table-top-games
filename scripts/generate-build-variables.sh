@@ -18,7 +18,7 @@ if [ -z "$CLIENT_VERSION" ]; then
 	fi
 fi
 
-cat << EOF > client/autoload/Build.gd
+cat << EOF > autoload/Build.gd
 extends Node
 
 func _ready() -> void:
