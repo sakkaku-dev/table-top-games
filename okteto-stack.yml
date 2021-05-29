@@ -5,12 +5,13 @@ services:
     environment:
       - DB=${NAKAMA_DB}
       - PW=${ADMIN_PW}
+      - KEY=${NAKAMA_SERVER_KEY}
     entrypoint:
       - "/bin/sh"
       - "-ecx"
       - >
         /nakama/nakama migrate up --database.address "${DB}" &&
-        exec /nakama/nakama --console.password "${PW}" --name nakama1 --database.address "${DB}" --logger.level DEBUG --session.token_expiry_sec 7200 --metrics.prometheus_port 9100
+        exec /nakama/nakama --console.password "${PW}" --name nakama1 --database.address "${DB}" --logger.level DEBUG --session.token_expiry_sec 7200 --metrics.prometheus_port 9100 --socket.server_key "${KEY}"
     volumes:
       - data:/nakama/data
       - ./cc-ca.crt:/cc-ca.crt
