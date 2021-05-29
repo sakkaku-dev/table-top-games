@@ -11,7 +11,6 @@ jobs:
       - uses: okteto/login@master
         with:
           token: ${{ secrets.OKTETO_TOKEN }}
-      - uses: okteto/namespace@master
       - env:
           CERT: ${{ secrets.DB_CERT }}
         run: echo -n "$CERT" | base64 --decode > cc-ca.crt
