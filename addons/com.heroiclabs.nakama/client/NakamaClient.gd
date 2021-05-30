@@ -15,7 +15,7 @@ func _no_get():
 var host : String setget _no_set
 
 # The port number of the server. Defaults to 7350.
-#var port : int setget _no_set
+var port : int setget _no_set
 
 # The protocol scheme used to connect with the server. Must be either "http" or "https".
 var scheme : String setget _no_set
@@ -40,7 +40,7 @@ func _init(p_adapter : NakamaHTTPAdapter,
 	server_key = p_server_key
 	scheme = p_scheme
 	host = p_host
-	#port = p_port
+	port = p_port
 	timeout = p_timeout
 	logger = p_adapter.logger
 	
