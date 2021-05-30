@@ -1,4 +1,4 @@
 extends Node
 
-var online_play := false
+var online_play := true
 

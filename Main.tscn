@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://main/screens/ConnectionScreen.tscn" type="PackedScene" id=2]
@@ -12,8 +12,6 @@
 [ext_resource path="res://assets/music/THEME #1.ogg" type="AudioStream" id=11]
 [ext_resource path="res://assets/music/DOMEFIGHTERS.ogg" type="AudioStream" id=12]
 [ext_resource path="res://assets/music/FISHSTICKS.ogg" type="AudioStream" id=13]
-[ext_resource path="res://main/screens/LeaderboardScreen.tscn" type="PackedScene" id=14]
-[ext_resource path="res://main/screens/CreditsScreen.tscn" type="PackedScene" id=15]
 [ext_resource path="res://main/screens/TransparentButton.gd" type="Script" id=17]
 [ext_resource path="res://assets/ui/mute.png" type="Texture" id=18]
 [ext_resource path="res://assets/ui/close.png" type="Texture" id=19]
@@ -41,12 +39,6 @@ visible = false
 visible = false
 
 [node name="ReadyScreen" parent="UILayer/Screens" instance=ExtResource( 6 )]
-visible = false
-
-[node name="LeaderboardScreen" parent="UILayer/Screens" instance=ExtResource( 14 )]
-visible = false
-
-[node name="CreditsScreen" parent="UILayer/Screens" instance=ExtResource( 15 )]
 visible = false
 
 [node name="Overlay" type="Control" parent="UILayer"]

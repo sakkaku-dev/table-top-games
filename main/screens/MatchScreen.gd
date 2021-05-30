@@ -1,19 +1,20 @@
+# Modified from original "Fish Game" code
+# Removed matchmaking related code
+
 extends "res://main/Screen.gd"
 
-onready var matchmaker_player_count_control := $PanelContainer/VBoxContainer/MatchPanel/SpinBox
-onready var join_match_id_control := $PanelContainer/VBoxContainer/JoinPanel/LineEdit
+onready var create_button = $PanelContainer/VBoxContainer/CreatePanel/HBoxContainer/CreateButton
+onready var join_button = $PanelContainer/VBoxContainer/JoinPanel/HBoxContainer/JoinButton
+onready var join_match_id_control := $PanelContainer/VBoxContainer/JoinPanel/HBoxContainer/LineEdit
 
 func _ready() -> void:
-	$PanelContainer/VBoxContainer/MatchPanel/MatchButton.connect("pressed", self, "_on_match_button_pressed", [OnlineMatch.MatchMode.MATCHMAKER])
-	$PanelContainer/VBoxContainer/CreatePanel/CreateButton.connect("pressed", self, "_on_match_button_pressed", [OnlineMatch.MatchMode.CREATE])
-	$PanelContainer/VBoxContainer/JoinPanel/JoinButton.connect("pressed", self, "_on_match_button_pressed", [OnlineMatch.MatchMode.JOIN])
+	create_button.connect("pressed", self, "_on_match_button_pressed", [OnlineMatch.MatchMode.CREATE])
+	join_button.connect("pressed", self, "_on_match_button_pressed", [OnlineMatch.MatchMode.JOIN])
 	
-	OnlineMatch.connect("matchmaker_matched", self, "_on_OnlineMatch_matchmaker_matched")
 	OnlineMatch.connect("match_created", self, "_on_OnlineMatch_created")
 	OnlineMatch.connect("match_joined", self, "_on_OnlineMatch_joined")
 
 func _show_screen(_info: Dictionary = {}) -> void:
-	matchmaker_player_count_control.value = 2
 	join_match_id_control.text = ''
 
 func _on_match_button_pressed(mode) -> void:
@@ -35,33 +36,10 @@ func _on_match_button_pressed(mode) -> void:
 	
 	# Call internal method to do actual work.
 	match mode:
-		OnlineMatch.MatchMode.MATCHMAKER:
-			_start_matchmaking()
 		OnlineMatch.MatchMode.CREATE:
 			_create_match()
 		OnlineMatch.MatchMode.JOIN:
 			_join_match()
-
-func _start_matchmaking() -> void:
-	var min_players = matchmaker_player_count_control.value
-	
-	ui_layer.hide_screen()
-	ui_layer.show_message("Looking for match...")
-	
-	var data = {
-		min_count = min_players,
-		string_properties = {
-			game = "fish_game",
-			engine = "godot",
-		},
-		query = "+properties.game:fish_game +properties.engine:godot",
-	}
-	
-	OnlineMatch.start_matchmaking(Online.nakama_socket, data)
-
-func _on_OnlineMatch_matchmaker_matched(_players: Dictionary):
-	ui_layer.hide_message()
-	ui_layer.show_screen("ReadyScreen", { players = _players })
 
 func _create_match() -> void:
 	OnlineMatch.create_match(Online.nakama_socket)
@@ -84,6 +62,3 @@ func _on_OnlineMatch_joined(match_id: String):
 
 func _on_PasteButton_pressed() -> void:
 	join_match_id_control.text = OS.clipboard
-
-func _on_LeaderboardButton_pressed() -> void:
-	ui_layer.show_screen("LeaderboardScreen")
