@@ -4,7 +4,7 @@ if [ -z "$NAKAMA_SERVER_KEY" -o -z "$NAKAMA_HOST" -o -z "$NAKAMA_PORT" ]; then
 	exit 0
 fi
 
-NAKAMA_SERVER_KEY=$(base64 -d <<< "$NAKAMA_SERVER_KEY")
+#NAKAMA_SERVER_KEY=$(base64 -d <<< "$NAKAMA_SERVER_KEY")
 
 # Use the Git hash if no CLIENT_VERSION is given.
 if [ -z "$CLIENT_VERSION" ]; then
