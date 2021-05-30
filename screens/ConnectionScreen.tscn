@@ -38,4 +38,12 @@ margin_top = 52.0
 margin_right = 64.0
 margin_bottom = 66.0
 
+[node name="Reconnect" type="Label" parent="CenterContainer"]
+visible = false
+margin_left = 469.0
+margin_top = 293.0
+margin_right = 555.0
+margin_bottom = 307.0
+text = "Reconnecting"
+
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Connect" to="." method="connect_client"]

@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "MenuContainer",
+"language": "GDScript",
+"path": "res://gui/MenuContainer.gd"
+}, {
 "base": "Reference",
 "class": "NakamaAPI",
 "language": "GDScript",
@@ -85,6 +90,7 @@ _global_script_classes=[ {
 "path": "res://addons/uuid/uuid.gd"
 } ]
 _global_script_class_icons={
+"MenuContainer": "",
 "NakamaAPI": "",
 "NakamaAsyncResult": "",
 "NakamaClient": "",
