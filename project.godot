@@ -88,6 +88,11 @@ _global_script_classes=[ {
 "class": "UILayer",
 "language": "GDScript",
 "path": "res://main/UILayer.gd"
+}, {
+"base": "Node",
+"class": "UUID",
+"language": "GDScript",
+"path": "res://addons/uuid/uuid.gd"
 } ]
 _global_script_class_icons={
 "NakamaAPI": "",
@@ -105,12 +110,13 @@ _global_script_class_icons={
 "NakamaStorageObjectId": "",
 "NakamaWriteStorageObject": "",
 "Pickup": "",
-"UILayer": ""
+"UILayer": "",
+"UUID": ""
 }
 
 [application]
 
-config/name="Fish Game"
+config/name="Table Top Games"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
