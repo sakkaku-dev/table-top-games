@@ -29,7 +29,6 @@ func _ready() -> void:
 	
 	if enable_only_for_web and not OS.has_feature("Javascript"):
 		show_screen("UnsupportedScreen")
-		return
 	else:
 		show_screen("ConnectionScreen")
 		_is_ready = true
