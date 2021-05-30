@@ -1,3 +1,6 @@
+# Modified from original "Fish Game" code
+# Replaced TitleScreen with ConnectionScreen
+
 extends CanvasLayer
 class_name UILayer
 
@@ -21,7 +24,7 @@ func _ready() -> void:
 		if screen.has_method('_setup_screen'):
 			screen._setup_screen(self)
 	
-	show_screen("TitleScreen")
+	show_screen("ConnectionScreen")
 	_is_ready = true
 
 func get_current_screen_name() -> String:

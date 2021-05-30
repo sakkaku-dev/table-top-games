@@ -1,3 +1,6 @@
+# Modified from original "Fish Game" code
+# Removed methods related to TitleScreen
+
 extends Node2D
 
 onready var game = $Game
@@ -31,21 +34,6 @@ func _get_custom_rpc_methods() -> Array:
 # UI callbacks
 #####
 
-func _on_TitleScreen_play_local() -> void:
-	GameState.online_play = false
-	
-	ui_layer.hide_screen()
-	ui_layer.show_back_button()
-	
-	start_game()
-
-func _on_TitleScreen_play_online() -> void:
-	GameState.online_play = true
-	
-	# Show the game map in the background because we have nothing better.
-	game.reload_map()
-	
-	ui_layer.show_screen("ConnectionScreen")
 
 func _on_UILayer_change_screen(name: String, _screen) -> void:
 	if name == 'TitleScreen':

@@ -41,7 +41,7 @@ func do_login(save_credentials: bool = false) -> void:
 	else:
 		ui_layer.show_message("Logging in...")
 	
-	var nakama_session = yield(Online.nakama_client.authenticate_device_async(id, username), "completed")
+	var nakama_session = yield(Online.nakama_client.authenticate_device_async(id, username, save_credentials), "completed")
 	
 	if nakama_session.is_exception():
 		visible = true

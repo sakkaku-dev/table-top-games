@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://main/screens/ConnectionScreen.tscn" type="PackedScene" id=2]
@@ -6,7 +6,6 @@
 [ext_resource path="res://main/screens/MatchScreen.tscn" type="PackedScene" id=4]
 [ext_resource path="res://main/UILayer.gd" type="Script" id=5]
 [ext_resource path="res://main/screens/ReadyScreen.tscn" type="PackedScene" id=6]
-[ext_resource path="res://main/screens/TitleScreen.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/fonts/monogram.tres" type="DynamicFont" id=8]
 [ext_resource path="res://main/Music.gd" type="Script" id=9]
 [ext_resource path="res://assets/music/BUILD UP.ogg" type="AudioStream" id=10]
@@ -34,9 +33,6 @@ anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="TitleScreen" parent="UILayer/Screens" instance=ExtResource( 7 )]
-visible = false
 
 [node name="ConnectionScreen" parent="UILayer/Screens" instance=ExtResource( 2 )]
 visible = false
@@ -128,8 +124,6 @@ bus = "Music"
 [connection signal="player_dead" from="Game" to="." method="_on_Game_player_dead"]
 [connection signal="back_button" from="UILayer" to="." method="_on_UILayer_back_button"]
 [connection signal="change_screen" from="UILayer" to="." method="_on_UILayer_change_screen"]
-[connection signal="play_local" from="UILayer/Screens/TitleScreen" to="." method="_on_TitleScreen_play_local"]
-[connection signal="play_online" from="UILayer/Screens/TitleScreen" to="." method="_on_TitleScreen_play_online"]
 [connection signal="ready_pressed" from="UILayer/Screens/ReadyScreen" to="." method="_on_ReadyScreen_ready_pressed"]
 [connection signal="pressed" from="UILayer/Overlay/BackButton" to="UILayer" method="_on_BackButton_pressed"]
 [connection signal="toggled" from="UILayer/Overlay/MuteButton" to="UILayer" method="_on_MuteButton_toggled"]
