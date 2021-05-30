@@ -45,9 +45,9 @@ func do_login(save_credentials: bool = false) -> void:
 	
 	if nakama_session.is_exception():
 		visible = true
-		ui_layer.show_message("Login failed!")
+		ui_layer.show_message("Login failed! " + str(Online.get_error_message(nakama_session)))
 		
-		if nakama_session.exception.status_code == 404:
+		if save_credentials or nakama_session.exception.status_code == 404:
 			id = ''
 		
 		# We always set Online.nakama_session in case something is yielding
