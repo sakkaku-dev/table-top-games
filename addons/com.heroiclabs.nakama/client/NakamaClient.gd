@@ -15,7 +15,7 @@ func _no_get():
 var host : String setget _no_set
 
 # The port number of the server. Defaults to 7350.
-var port : int setget _no_set
+#var port : int setget _no_set
 
 # The protocol scheme used to connect with the server. Must be either "http" or "https".
 var scheme : String setget _no_set
@@ -40,10 +40,12 @@ func _init(p_adapter : NakamaHTTPAdapter,
 	server_key = p_server_key
 	scheme = p_scheme
 	host = p_host
-	port = p_port
+	#port = p_port
 	timeout = p_timeout
 	logger = p_adapter.logger
-	_api_client = NakamaAPI.ApiClient.new(scheme + "://" + host + ":" + str(port), p_adapter, NakamaAPI, p_timeout)
+	
+	# Port is included in the host, this is required for the production url since a port is not required in this case
+	_api_client = NakamaAPI.ApiClient.new(scheme + "://" + host, p_adapter, NakamaAPI, p_timeout)
 
 # Restore a session from the auth token.
 # A `null` or empty authentication token will return `null`.
@@ -54,7 +56,7 @@ static func restore_session(auth_token : String):
 
 func _to_string():
 	return "Client(Host='%s', Port=%s, Scheme='%s', ServerKey='%s', Timeout=%s)" % [
-		host, port, scheme, server_key, timeout
+		host, scheme, server_key, timeout
 	]
 
 func _parse_auth(p_session) -> NakamaSession:

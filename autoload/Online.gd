@@ -1,5 +1,6 @@
 # Modified from original "Fish Game" code
 # Added some utility methods
+# Combined host and port
 
 extends Node
 
@@ -7,8 +8,7 @@ extends Node
 #   Online.nakama_host = 'nakama.example.com'
 #   Online.nakama_scheme = 'https'
 var nakama_server_key: String = 'defaultkey'
-var nakama_host: String = 'localhost'
-var nakama_port: int = 7350
+var nakama_host: String = 'localhost:7350'
 var nakama_scheme: String = 'http'
 
 # For other scripts to access:
@@ -35,7 +35,7 @@ func get_nakama_client() -> NakamaClient:
 		nakama_client = Nakama.create_client(
 			nakama_server_key,
 			nakama_host,
-			nakama_port,
+			-1, # Port is included in the host, this is required for the production url since a port is not required in this case
 			nakama_scheme,
 			Nakama.DEFAULT_TIMEOUT,
 			NakamaLogger.LOG_LEVEL.ERROR)

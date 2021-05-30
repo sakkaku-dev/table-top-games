@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "$NAKAMA_SERVER_KEY" -o -z "$NAKAMA_HOST" -o -z "$NAKAMA_PORT" ]; then
+if [ -z "$NAKAMA_SERVER_KEY" -o -z "$NAKAMA_HOST"]; then
 	exit 0
 fi
 
@@ -23,7 +23,6 @@ extends Node
 
 func _ready() -> void:
 	Online.nakama_host = '$NAKAMA_HOST'
-	Online.nakama_port = $NAKAMA_PORT
 	Online.nakama_server_key = '$NAKAMA_SERVER_KEY'
 	Online.nakama_scheme = 'https'
 	
