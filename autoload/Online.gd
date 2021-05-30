@@ -74,10 +74,13 @@ func is_nakama_socket_connected() -> bool:
 
 func get_error_message(result: NakamaAsyncResult) -> String:
 	var msg = result.exception.message
-	var idx = msg.find("message:") + 8
+	
+	var idx = msg.find("message:")
+	if idx == -1: return ""
+	
+	idx += 8
 	var last_idx = msg.find(",", idx)
 	if last_idx == -1:
 		last_idx = msg.find("}", idx)
 
-	print(idx, last_idx)
 	return msg.substr(idx, last_idx - idx)
