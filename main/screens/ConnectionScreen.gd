@@ -41,11 +41,14 @@ func do_login(save_credentials: bool = false) -> void:
 	else:
 		ui_layer.show_message("Logging in...")
 	
-	var nakama_session = yield(Online.nakama_client.authenticate_device_async(id, username, save_credentials), "completed")
+	var nakama_session: NakamaSession = yield(Online.nakama_client.authenticate_device_async(id, username, save_credentials), "completed")
 	
 	if nakama_session.is_exception():
 		visible = true
 		ui_layer.show_message("Login failed!")
+		
+		if nakama_session.exception.status_code == 404:
+			id = ''
 		
 		# We always set Online.nakama_session in case something is yielding
 		# on the "session_changed" signal.
