@@ -29,6 +29,7 @@ func _set_readonly_variable(_value) -> void:
 func _ready() -> void:
 	# Don't stop processing messages from Nakama when the game is paused.
 	Nakama.pause_mode = Node.PAUSE_MODE_PROCESS
+	print("Version " + str(OnlineMatch.client_version))
 
 func get_nakama_client() -> NakamaClient:
 	if nakama_client == null:
