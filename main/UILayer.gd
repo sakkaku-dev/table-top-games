@@ -1,8 +1,11 @@
 # Modified from original "Fish Game" code
 # Replaced TitleScreen with ConnectionScreen
+# Added javascript check
 
 extends CanvasLayer
 class_name UILayer
+
+export var enable_only_for_web = false
 
 onready var screens = $Screens
 onready var message_label = $Overlay/Message
@@ -24,8 +27,12 @@ func _ready() -> void:
 		if screen.has_method('_setup_screen'):
 			screen._setup_screen(self)
 	
-	show_screen("ConnectionScreen")
-	_is_ready = true
+	if enable_only_for_web and not OS.has_feature("Javascript"):
+		show_screen("UnsupportedScreen")
+		return
+	else:
+		show_screen("ConnectionScreen")
+		_is_ready = true
 
 func get_current_screen_name() -> String:
 	if current_screen:

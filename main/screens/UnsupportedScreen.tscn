@@ -1,0 +1,23 @@
+[gd_scene format=2]
+
+[node name="UnsupportedScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CenterContainer"]
+margin_left = 185.0
+margin_top = 164.0
+margin_right = 455.0
+margin_bottom = 195.0
+text = "This version of the game is not supported.
+Please use the browser version."
