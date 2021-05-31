@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "$NAKAMA_SERVER_KEY" -o -z "$NAKAMA_HOST"]; then
+if [ -z "$NAKAMA_SERVER_KEY" -o -z "$NAKAMA_HOST" ]; then
 	exit 0
 fi
 
