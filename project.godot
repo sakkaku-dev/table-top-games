@@ -9,6 +9,16 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node2D",
+"class": "Board",
+"language": "GDScript",
+"path": "res://games/boards/Board.gd"
+}, {
+"base": "Resource",
+"class": "DealConfig",
+"language": "GDScript",
+"path": "res://games/boards/DealConfig.gd"
+}, {
 "base": "Reference",
 "class": "NakamaAPI",
 "language": "GDScript",
@@ -84,6 +94,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://pickups/Pickup.gd"
 }, {
+"base": "Sprite",
+"class": "PokerCard",
+"language": "GDScript",
+"path": "res://games/decks/poker-cards/PokerCard.gd"
+}, {
+"base": "Node",
+"class": "PokerDeck",
+"language": "GDScript",
+"path": "res://games/decks/poker-cards/PokerDeck.gd"
+}, {
 "base": "CanvasLayer",
 "class": "UILayer",
 "language": "GDScript",
@@ -95,6 +115,8 @@ _global_script_classes=[ {
 "path": "res://addons/uuid/uuid.gd"
 } ]
 _global_script_class_icons={
+"Board": "",
+"DealConfig": "",
 "NakamaAPI": "",
 "NakamaAsyncResult": "",
 "NakamaClient": "",
@@ -110,6 +132,8 @@ _global_script_class_icons={
 "NakamaStorageObjectId": "",
 "NakamaWriteStorageObject": "",
 "Pickup": "",
+"PokerCard": "",
+"PokerDeck": "",
 "UILayer": "",
 "UUID": ""
 }

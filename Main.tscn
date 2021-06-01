@@ -25,7 +25,6 @@ script = ExtResource( 1 )
 [node name="UILayer" type="CanvasLayer" parent="."]
 pause_mode = 2
 script = ExtResource( 5 )
-enable_only_for_web = true
 
 [node name="Screens" type="Control" parent="UILayer"]
 anchor_right = 1.0

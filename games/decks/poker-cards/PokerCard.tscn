@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://games/decks/poker-cards/PokerCard.gd" type="Script" id=1]
+[ext_resource path="res://games/decks/poker-cards/cardsLarge_tilemap.png" type="Texture" id=2]
+
+[node name="PokerCard" type="Sprite"]
+texture = ExtResource( 2 )
+hframes = 13
+vframes = 4
+script = ExtResource( 1 )

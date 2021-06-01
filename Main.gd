@@ -37,6 +37,7 @@ func _get_custom_rpc_methods() -> Array:
 
 
 func _on_UILayer_change_screen(name: String, _screen) -> void:
+	
 	if name in ['ConnectionScreen', 'MatchScreen']:
 		ui_layer.hide_back_button()
 	else:
@@ -76,7 +77,7 @@ func _on_OnlineMatch_disconnected():
 func _on_OnlineMatch_player_left(player) -> void:
 	ui_layer.show_message(player.username + " has left")
 	
-	game.kill_player(player.peer_id)
+	#game.kill_player(player.peer_id)
 	
 	players.erase(player.peer_id)
 	players_ready.erase(player.peer_id)
