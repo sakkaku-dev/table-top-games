@@ -9,7 +9,7 @@ func serialize(value) -> String:
 		result += "["
 		for i in range(0, value.size()):
 			var v = value[i]
-			result += _serialize_obj(v)
+			result += serialize(v)
 			if i != value.size() - 1:
 				result += ","
 		result += "]"
@@ -28,6 +28,7 @@ func _serialize_obj(obj) -> String:
 			values["script"] = script.resource_path
 			for prop in script.get_script_property_list():
 				values[prop.name] = obj.get(prop.name)
+				
 			return var2str(values)
 
 	return var2str(obj)
@@ -35,16 +36,16 @@ func _serialize_obj(obj) -> String:
 
 func deserialize(value):
 	var values = str2var(value)
-	
-	if values is Array:
+	return _deserialize_any(values)
+
+
+func _deserialize_any(value):
+	if value is Array:
 		var result = []
-		for v in values:
-			result.append(_deserialize_obj(v))
+		for v in value:
+			result.append(_deserialize_any(v))
 		return result
-	elif values is Dictionary:
-		return _deserialize_obj(values)
-	
-	return values
+	return _deserialize_obj(value)
 
 
 func _deserialize_obj(values):
