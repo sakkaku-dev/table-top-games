@@ -13,10 +13,11 @@ This project is licensed under the Apache 2.0 License, with the following except
 Credits
 -------
 
-The makers of the ["Fish Game"](https://github.com/heroiclabs/fishgame-godot)
+- The makers of the ["Fish Game"](https://github.com/heroiclabs/fishgame-godot)
 [(tutorial)](https://github.com/heroiclabs/fishgame-godot)
+    - Programming: David Snopek from [Snopek Games](https://www.snopekgames.com)
+    - Art: Orlando Herrera a.k.a [Pixel Frog](https://pixelfrog-store.itch.io)
+    - Music/Sound: Jakob T. Rypdal
+    - Font: [Monogram](https://datagoblin.itch.io/monogram) by Vincius Menzio
 
-Programming: David Snopek from [Snopek Games](https://www.snopekgames.com)
-Art: Orlando Herrera a.k.a [Pixel Frog](https://pixelfrog-store.itch.io)
-Music/Sound: Jakob T. Rypdal
-Font: [Monogram](https://datagoblin.itch.io/monogram) by Vincius Menzio
+- [Godot Card Engine](https://www.braindead.bzh/page/cardengine-home)
