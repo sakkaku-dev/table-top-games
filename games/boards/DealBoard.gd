@@ -7,6 +7,8 @@ var hands = {}
 
 var hand = []
 
+onready var hand_node = $Hand
+
 export var config: Resource = load("res://games/boards/DealAll.tres")
 
 func _get_custom_rpc_methods() -> Array:
@@ -36,7 +38,6 @@ func setup_board(players: Dictionary) -> void:
 		if OnlineMatch.get_network_unique_id() == id:
 			_set_hand(hand)
 		else:
-			# TODO: cannot send cards, convert to json?
 			OnlineMatch.custom_rpc_id(self, id, "_set_hand", [hand])
 
 
@@ -53,4 +54,13 @@ func _is_hands_full(max_cards: int) -> bool:
 
 func _set_hand(cards: Array) -> void:
 	hand = cards
-	print(hand)
+	
+	for c in hand_node.get_children():
+		hand_node.remove_child(c)
+		
+	for i in range(0, hand.size()):
+		var card = hand[i]
+		var node = deck_type.create_node(card)
+		hand_node.add_child(node)
+		node.position.x += i * 20
+		

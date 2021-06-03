@@ -19,6 +19,8 @@ var my_peer_id: int setget _set_readonly_variable
 var players: Dictionary
 var _next_peer_id: int
 
+var serializer = Serializer.new()
+
 enum MatchState {
 	LOBBY = 0,
 	MATCHING = 1,
@@ -247,11 +249,12 @@ func custom_rpc_id(node: Node, id: int, method: String, args: Array = []) -> voi
 	assert(nakama_socket != null)
 	
 	if nakama_socket:
+		var data = serializer.serialize(args)
 		nakama_socket.send_match_state_async(match_id, MatchOpCode.CUSTOM_RPC, JSON.print({
 			peer_id = id,
 			node_path = str(node.get_path()),
 			method = method,
-			args = var2str(args),
+			args = data,
 		}))
 
 func custom_rpc_sync(node: Node, method: String, args: Array = []) -> void:
@@ -408,7 +411,7 @@ func _on_nakama_match_state(data: NakamaRTAPI.MatchData):
 				push_error("Custom RPC: Method %s is not returned by %s._get_custom_rpc_methods()" % [content['method'], content['node_path']])
 				return
 			
-			node.callv(content['method'], str2var(content['args']))
+			node.callv(content['method'], serializer.deserialize(content['args']))
 	if data.op_code == MatchOpCode.JOIN_SUCCESS && match_mode == MatchMode.JOIN:
 		var host_client_version = content.get('client_version', '')
 		if client_version != host_client_version:

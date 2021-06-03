@@ -37,7 +37,6 @@ func _get_custom_rpc_methods() -> Array:
 
 
 func _on_UILayer_change_screen(name: String, _screen) -> void:
-	
 	if name in ['ConnectionScreen', 'MatchScreen']:
 		ui_layer.hide_back_button()
 	else:
