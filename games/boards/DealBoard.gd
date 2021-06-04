@@ -5,7 +5,7 @@ var deck_type = PokerDeck.new()
 
 var hands = {}
 
-var hand = []
+var hand_store = CardHand.new()
 
 onready var hand_node = $Hand
 
@@ -19,6 +19,9 @@ func _get_custom_rpc_methods() -> Array:
 func setup_board(players: Dictionary) -> void:
 	deck = deck_type.init_deck()
 	deck.shuffle()
+	
+	hand_node.set_store(hand_store)
+	hand_node.card_visual = deck_type.get_ui()
 	
 	hands = {}
 	
@@ -35,10 +38,7 @@ func setup_board(players: Dictionary) -> void:
 	
 	for id in hands:
 		var hand = hands[id]
-		if OnlineMatch.get_network_unique_id() == id:
-			_set_hand(hand)
-		else:
-			OnlineMatch.custom_rpc_id(self, id, "_set_hand", [hand])
+		OnlineMatch.custom_rpc_id(self, id, "_set_hand", [hand])
 
 
 func _is_hands_full(max_cards: int) -> bool:
@@ -53,14 +53,14 @@ func _is_hands_full(max_cards: int) -> bool:
 
 
 func _set_hand(cards: Array) -> void:
-	hand = cards
+	hand_store.populate(cards)
 	
-	for c in hand_node.get_children():
-		hand_node.remove_child(c)
-		
-	for i in range(0, hand.size()):
-		var card = hand[i]
-		var node = deck_type.create_node(card)
-		hand_node.add_child(node)
-		node.position.x += i * 20
+#	for c in hand_node.get_children():
+#		hand_node.remove_child(c)
+#
+#	for i in range(0, hand.size()):
+#		var card = hand[i]
+#		var node = deck_type.create_node(card)
+#		hand_node.add_child(node)
+#		node.position.x = i * 20
 		

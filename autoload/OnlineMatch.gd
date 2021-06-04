@@ -244,11 +244,15 @@ func custom_rpc(node: Node, method: String, args: Array = []) -> void:
 	custom_rpc_id(node, 0, method, args)
 
 func custom_rpc_id(node: Node, id: int, method: String, args: Array = []) -> void:
-	assert(match_state == MatchState.READY or match_state == MatchState.PLAYING)
-	assert(match_id != '')
-	assert(nakama_socket != null)
 	
-	if nakama_socket:
+	if get_network_unique_id() == id:
+		node.callv(method, args)
+	elif nakama_socket:
+		
+		assert(match_state == MatchState.READY or match_state == MatchState.PLAYING)
+		assert(match_id != '')
+		assert(nakama_socket != null)
+		
 		var data = serializer.serialize(args)
 		nakama_socket.send_match_state_async(match_id, MatchOpCode.CUSTOM_RPC, JSON.print({
 			peer_id = id,

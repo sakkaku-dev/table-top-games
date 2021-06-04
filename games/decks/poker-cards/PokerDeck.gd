@@ -20,3 +20,6 @@ func create_node(card: PokerCard) -> Node2D:
 	var node = card_scene.instance()
 	node.poker_card = card
 	return node
+
+func get_ui() -> PackedScene:
+	return card_scene

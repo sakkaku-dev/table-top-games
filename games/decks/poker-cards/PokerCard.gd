@@ -1,3 +1,5 @@
+extends Card
+
 class_name PokerCard
 
 enum Suit {
@@ -12,3 +14,6 @@ var suit: int
 
 func _to_string():
 	return "PokerCard[value=%s, suit=%s]" % [value, suit]
+
+func ref():
+	return str(suit) + str(value)

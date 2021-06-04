@@ -1,7 +1,7 @@
 # Modified from original "Fish Game" code
 # Kept some game initialization part
 
-extends Node2D
+extends Node
 
 var deal_board = preload("res://games/boards/DealBoard.tscn")
 

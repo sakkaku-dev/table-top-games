@@ -2,7 +2,7 @@
 # Removed methods related to TitleScreen, CreditsScreen, LeaderboardScreen
 
 
-extends Node2D
+extends Node
 
 onready var game = $Game
 onready var ui_layer: UILayer = $UILayer
