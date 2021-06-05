@@ -10,5 +10,5 @@ size = Vector2( 40, 58 )
 
 [node name="Sprite" type="Sprite" parent="AnimContainer/Front" index="0"]
 texture = ExtResource( 2 )
-hframes = 13
+hframes = 14
 vframes = 4

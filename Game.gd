@@ -15,6 +15,11 @@ signal game_started ()
 signal player_dead (player_id)
 signal game_over (player_id)
 
+
+func _ready():
+	OnlineMatch.connect("disconnected", self, "game_stop")
+
+
 func _get_custom_rpc_methods() -> Array:
 	return [
 		'_do_game_setup',
@@ -41,6 +46,7 @@ func _do_game_setup(players: Dictionary) -> void:
 	
 	board = deal_board.instance()
 	add_child(board)
+	board.setup_client()
 	
 #	for player_id in players:
 #		var other_player = Player.instance()
@@ -81,8 +87,9 @@ func _finished_game_setup(player_id: int) -> void:
 func _do_game_start() -> void:
 	emit_signal("game_started")
 	
+	# Setup here so the nodes exist on all clients
 	if OnlineMatch.is_network_server():
-		board.setup_board(players_alive)
+		board.setup_server(players_alive)
 	
 	get_tree().set_pause(false)
 
