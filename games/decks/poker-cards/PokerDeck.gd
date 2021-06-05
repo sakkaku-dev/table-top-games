@@ -23,3 +23,11 @@ func create_node(card: PokerCard) -> Node2D:
 
 func get_ui() -> PackedScene:
 	return card_scene
+
+func create_from_ref(ref) -> PokerCard:
+	var card = PokerCard.new()
+	var suit = int(ref.substr(0, 1))
+	var value = int(ref.substr(1))
+	card.suit = suit
+	card.value = value
+	return card

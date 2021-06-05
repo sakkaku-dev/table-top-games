@@ -5,7 +5,7 @@ extends AbstractStore
 signal card_played(ref)
 
 
-func play_card(ref: int, discard_pile: AbstractStore = null) -> void:
+func play_card(ref, discard_pile: AbstractStore = null) -> void:
 	if discard_pile != null:
 		move_card(ref, discard_pile)
 	else:

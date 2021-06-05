@@ -31,3 +31,5 @@ margin_top = -180.0
 margin_right = 100.0
 margin_bottom = 180.0
 random_rotation = true
+
+[connection signal="card_clicked" from="Hand" to="." method="play_card"]

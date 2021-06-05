@@ -132,7 +132,7 @@ func set_board(board: AbstractBoard) -> void:
 	_board = board
 
 
-func _card_clicked(card: Card) -> void:
+func _card_clicked(card: CardUI) -> void:
 	pass
 
 
@@ -511,15 +511,15 @@ func _on_AbstractContainer_resized() -> void:
 	_update_container()
 
 
-func _on_need_removal(card: Card) -> void:
+func _on_need_removal(card: CardUI) -> void:
 	_cards.remove_child(card)
 	card.queue_free()
 
 
-func _on_card_clicked(card: Card) -> void:
+func _on_card_clicked(card: CardUI) -> void:
 	if _interactive:
 		_card_clicked(card)
-		emit_signal("card_clicked", card)
+		emit_signal("card_clicked", card.instance())
 
 
 func _on_card_focused(card: Card) -> void:

@@ -11,3 +11,4 @@ func set_instance(card):
 		sprite.frame_coords = Vector2(card.value, card.suit)
 
 	poker_card = card
+	.set_instance(card)

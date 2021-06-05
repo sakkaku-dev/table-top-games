@@ -1,10 +1,11 @@
 extends Hand
 
 export var random_rotation = false
+export var show_cards = true
 
 func _ready():
 	_layout_mode = LayoutMode.GRID
-	_face_up = true
+	_face_up = show_cards
 
 	# Grid parameters
 	_grid_card_width = 80

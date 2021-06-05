@@ -70,9 +70,9 @@ class StoreSorter:
 
 
 signal changed()
-signal card_added()
+signal card_added(ref)
 signal cards_added()
-signal card_removed(index)
+signal card_removed(ref)
 signal cards_removed()
 signal filtered()
 signal sorted()
@@ -229,19 +229,19 @@ func find(id: String) -> Array:
 	return result
 
 
-func find_first(id: String) -> CardInstance:
+func find_first(ref) -> CardInstance:
 	for card in _cards:
-		if card.data().id == id:
+		if card.ref() == ref:
 			return card
 
 	return null
 
 
-func find_last(id: String) -> CardInstance:
+func find_last(ref) -> CardInstance:
 	var result: CardInstance = null
 
 	for card in _cards:
-		if card.data().id == id:
+		if card.ref() == ref:
 			result = card
 
 	return result
@@ -275,55 +275,53 @@ func add_cards(cards: Array) -> void:
 	emit_signal("changed")
 
 
-func add_card(card: CardInstance) -> void:
+func add_card(card) -> void:
 	_cards.append(card)
 	_update_stats()
 	_update_filtered()
-	emit_signal("card_added")
+	emit_signal("card_added", card.ref())
 	emit_signal("changed")
 
 
-func remove_card(ref: int) -> void:
+func remove_card(ref) -> void:
 	var index: int = _ref2idx(ref)
 
 	if index >= 0:
 		_cards.remove(index)
 		_update_stats()
 		_update_filtered()
-		emit_signal("card_removed", index)
+		emit_signal("card_removed", ref)
 		emit_signal("changed")
 
 
-func remove_first(id: String = "") -> void:
-	if id == "":
-		_cards.pop_front()
+func remove_first(ref = "") -> void:
+	if ref == "":
+		var card = _cards.pop_front()
+		_update_stats()
+		_update_filtered()
+		emit_signal("card_removed", card.ref())
+		emit_signal("changed")
 	else:
-		var card = find_first(id)
+		var card = find_first(ref)
 		if card == null:
 			return
 
 		remove_card(card.ref())
 
-	_update_stats()
-	_update_filtered()
-	emit_signal("card_removed", 0)
-	emit_signal("changed")
 
-
-func remove_last(id: String = "") -> void:
-	if id == "":
-		_cards.pop_back()
+func remove_last(ref = "") -> void:
+	if ref == "":
+		var card = _cards.pop_back()
+		_update_stats()
+		_update_filtered()
+		emit_signal("card_removed", card.ref())
+		emit_signal("changed")
 	else:
-		var card = find_last(id)
+		var card = find_last(ref)
 		if card == null:
 			return
 
 		remove_card(card.ref())
-
-	_update_stats()
-	_update_filtered()
-	emit_signal("card_removed", count()-1)
-	emit_signal("changed")
 
 
 func move_cards(to: AbstractStore) -> void:
@@ -331,7 +329,7 @@ func move_cards(to: AbstractStore) -> void:
 	clear()
 
 
-func move_card(ref: int, to: AbstractStore) -> CardInstance:
+func move_card(ref, to: AbstractStore) -> CardInstance:
 	var index: int = _ref2idx(ref)
 
 	if index >= 0:
@@ -339,7 +337,7 @@ func move_card(ref: int, to: AbstractStore) -> CardInstance:
 		_cards.remove(index)
 		_update_stats()
 		_update_filtered()
-		emit_signal("card_removed", index)
+		emit_signal("card_removed", ref)
 		emit_signal("changed")
 
 		to.add_card(card)
@@ -387,7 +385,7 @@ func keep(count: int) -> void:
 	emit_signal("changed")
 
 
-func _ref2idx(ref: int) -> int:
+func _ref2idx(ref) -> int:
 	var search: int = 0
 
 	for card in _cards:
