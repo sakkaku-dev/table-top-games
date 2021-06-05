@@ -29,11 +29,11 @@ var _board: AbstractBoard = null
 # Grid parameters
 var _grid_card_width: float = 80
 var _grid_fixed_width: bool = true
-var _grid_card_spacing: Vector2 = Vector2(0.5, 1.2)
+var _grid_card_spacing: Vector2 = Vector2(0.5, 1)
 var _grid_halign: int = HALIGN_CENTER
 var _grid_valign: int = VALIGN_CENTER
 var _grid_columns: int = -1
-var _grid_expand: bool = true
+var _grid_expand: bool = false
 
 # Interaction parameters
 var _interactive: bool = true
@@ -61,10 +61,10 @@ var _fine_angle_max: float = deg2rad(10.0)
 
 # Scale fine tuning
 var _fine_scale: bool = false
-var _fine_scale_mode = FineTuningMode.RANDOM
+var _fine_scale_mode = FineTuningMode.LINEAR
 var _fine_scale_ratio = AspectMode.KEEP
-var _fine_scale_min: Vector2 = Vector2(0.85, 0.85)
-var _fine_scale_max: Vector2 = Vector2(1.15, 1.15)
+var _fine_scale_min: Vector2 = Vector2(0, 0)
+var _fine_scale_max: Vector2 = Vector2(0, 0)
 
 # Transitions
 var _transitions: CardTransitions = CardTransitions.new()
@@ -73,12 +73,12 @@ var _transitions: CardTransitions = CardTransitions.new()
 var _anim: String = "hand"
 var _adjust_mode: String = "focused"
 var _adjust_pos_x_mode: String = "disabled"
-var _adjust_pos_y_mode: String = "disabled"
+var _adjust_pos_y_mode: String = "absolute"
 var _adjust_pos: Vector2 = Vector2(0.0, 0.0)
 var _adjust_scale_x_mode: String = "disabled"
 var _adjust_scale_y_mode: String = "disabled"
 var _adjust_scale: Vector2 = Vector2(0.0, 0.0)
-var _adjust_rot_mode: String = "disabled"
+var _adjust_rot_mode: String = "absolute"
 var _adjust_rot: float = 0.0
 
 onready var _cards = $DropArea/Cards
@@ -88,6 +88,18 @@ onready var _drop_area = $DropArea
 
 func _ready() -> void:
 	_drop_area.set_enabled(_drop_enabled)
+	
+	_transitions.layout.duration = 0.2
+	_transitions.layout.type = Tween.TRANS_QUAD
+	_transitions.layout.easing = Tween.EASE_IN_OUT
+
+	_transitions.in_anchor.duration = 0.5
+	_transitions.in_anchor.type = Tween.TRANS_BACK
+	_transitions.in_anchor.easing = Tween.EASE_OUT
+
+	_transitions.out_anchor.duration = 0.3
+	_transitions.out_anchor.type = Tween.TRANS_QUAD
+	_transitions.out_anchor.easing = Tween.EASE_IN_OUT
 
 
 func store() -> AbstractStore:
@@ -171,6 +183,8 @@ func _update_container() -> void:
 
 		visual_inst.name = CARD_NODE_FMT % card.ref()
 		_cards.add_child(visual_inst)
+		if card == null:
+			print("Null card")
 		visual_inst.set_instance(card)
 		visual_inst.set_container(data_id)
 		visual_inst.set_transitions(_transitions)
@@ -462,7 +476,7 @@ func _clear() -> void:
 		return
 
 	for child in _cards.get_children():
-		if not _store.has_card(child.instance().ref()):
+		if child.instance() and not _store.has_card(child.instance().ref()):
 			if _board != null:
 				_board.register_last_known_transform(
 					child.instance().ref(), _map_from(child.current_trans(true)))

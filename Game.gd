@@ -16,10 +16,6 @@ signal player_dead (player_id)
 signal game_over (player_id)
 
 
-func _ready():
-	OnlineMatch.connect("disconnected", self, "game_stop")
-
-
 func _get_custom_rpc_methods() -> Array:
 	return [
 		'_do_game_setup',

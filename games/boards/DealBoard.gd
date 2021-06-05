@@ -6,10 +6,17 @@ var deck_type = PokerDeck.new()
 var hands = {}
 
 var hand_store = CardHand.new()
+var discard_store = CardPile.new()
 
 onready var hand_node = $Hand
+onready var discard_node = $DiscardPile
 
 export var config: Resource = load("res://games/boards/DealAll.tres")
+
+
+func _ready():
+	hand_node.set_store(hand_store)
+	discard_node.set_store(discard_store)
 
 
 func _get_custom_rpc_methods() -> Array:
@@ -19,8 +26,8 @@ func _get_custom_rpc_methods() -> Array:
 	
 
 func setup_client() -> void:
-	hand_node.set_store(hand_store)
 	hand_node.card_visual = deck_type.get_ui()
+	discard_node.card_visual = deck_type.get_ui()
 
 func setup_server(players: Dictionary) -> void:
 	deck = deck_type.init_deck()
@@ -38,6 +45,8 @@ func setup_server(players: Dictionary) -> void:
 		var id = player_ids[idx]
 		hands[id].append(deck.pop_front())
 		count += 1
+	
+	discard_store.populate(deck)
 	
 	for id in hands:
 		var hand = hands[id]

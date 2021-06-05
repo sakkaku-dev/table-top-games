@@ -7,6 +7,7 @@ extends Node
 onready var game = $Game
 onready var ui_layer: UILayer = $UILayer
 onready var ready_screen = $UILayer/Screens/ReadyScreen
+onready var screens = $UILayer/Screens
 onready var music := $Music
 
 var players := {}
@@ -72,6 +73,7 @@ func _on_OnlineMatch_error(message: String):
 func _on_OnlineMatch_disconnected():
 	#_on_OnlineMatch_error("Disconnected from host")
 	_on_OnlineMatch_error('')
+	stop_game()
 
 func _on_OnlineMatch_player_left(player) -> void:
 	ui_layer.show_message(player.username + " has left")
@@ -110,7 +112,8 @@ func start_game() -> void:
 			1: "Player1",
 			2: "Player2",
 		}
-	
+
+	screens.hide()
 	game.game_start(players)
 
 func stop_game() -> void:
@@ -120,6 +123,7 @@ func stop_game() -> void:
 	players_ready.clear()
 	players_score.clear()
 	
+	screens.show()
 	game.game_stop()
 
 func restart_game() -> void:

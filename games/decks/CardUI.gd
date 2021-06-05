@@ -654,7 +654,7 @@ func _on_MouseArea_mouse_entered() -> void:
 	_post_event("focused")
 	emit_signal("focused")
 
-
+# Unfocus does not work if card is currently focused
 func _on_MouseArea_mouse_exited() -> void:
 #	if not _interactive or CardEngine.general().is_dragging() or _remove_flag:
 #		return

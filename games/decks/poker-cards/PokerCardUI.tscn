@@ -12,3 +12,10 @@ size = Vector2( 40, 58 )
 texture = ExtResource( 2 )
 hframes = 14
 vframes = 4
+frame = 39
+
+[node name="MouseArea" parent="AnimContainer" index="3"]
+margin_left = -20.0
+margin_top = -30.0
+margin_right = 20.0
+margin_bottom = 30.0
