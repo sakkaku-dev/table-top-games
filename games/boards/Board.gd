@@ -7,3 +7,6 @@ func setup_client() -> void:
 
 func setup_server(players: Dictionary) -> void:
 	pass
+
+func get_deck_type() -> Deck:
+	return null

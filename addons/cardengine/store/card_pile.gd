@@ -13,7 +13,7 @@ func shuffle() -> void:
 	emit_signal("changed")
 
 
-func draw() -> CardInstance:
+func draw() -> Card:
 	if is_empty():
 		return null
 

@@ -500,25 +500,25 @@ func _change_anim(anim: String) -> void:
 				_anim.idle_loop().rotation_sequence(),
 				_anim_player)
 
-		"focused":
-			if _adjust_on_focused and _adjusted_trans != null:
-				_transition(_root_trans, _adjusted_trans)
-
-			_cont.position = Vector2(0.0, 0.0)
-			_cont.scale = Vector2(1.0, 1.0)
-			_cont.rotation = 0.0
-
-			_setup_pos_sequence(
-				_anim.focused_animation().position_sequence(),
-				_anim_player)
-
-			_setup_scale_sequence(
-				_anim.focused_animation().scale_sequence(),
-				_anim_player)
-
-			_setup_rotation_sequence(
-				_anim.focused_animation().rotation_sequence(),
-				_anim_player)
+#		"focused":
+#			if _adjust_on_focused and _adjusted_trans != null:
+#				_transition(_root_trans, _adjusted_trans)
+#
+#			_cont.position = Vector2(0.0, 0.0)
+#			_cont.scale = Vector2(1.0, 1.0)
+#			_cont.rotation = 0.0
+#
+#			_setup_pos_sequence(
+#				_anim.focused_animation().position_sequence(),
+#				_anim_player)
+#
+#			_setup_scale_sequence(
+#				_anim.focused_animation().scale_sequence(),
+#				_anim_player)
+#
+#			_setup_rotation_sequence(
+#				_anim.focused_animation().rotation_sequence(),
+#				_anim_player)
 
 		"activated":
 			if _adjust_on_activated and _adjusted_trans != null:
@@ -560,25 +560,25 @@ func _change_anim(anim: String) -> void:
 				_anim.deactivated_animation().rotation_sequence(),
 				_anim_player)
 
-		"unfocused":
-			if _adjust_on_focused and _adjusted_trans != null:
-				_transition(_adjusted_trans, _root_trans)
-
-			_cont.position = _trans_focused.pos
-			_cont.scale = _trans_focused.scale
-			_cont.rotation = _trans_focused.rot
-
-			_setup_pos_sequence(
-				_anim.unfocused_animation().position_sequence(),
-				_anim_player)
-
-			_setup_scale_sequence(
-				_anim.unfocused_animation().scale_sequence(),
-				_anim_player)
-
-			_setup_rotation_sequence(
-				_anim.unfocused_animation().rotation_sequence(),
-				_anim_player)
+#		"unfocused":
+#			if _adjust_on_focused and _adjusted_trans != null:
+#				_transition(_adjusted_trans, _root_trans)
+#
+#			_cont.position = _trans_focused.pos
+#			_cont.scale = _trans_focused.scale
+#			_cont.rotation = _trans_focused.rot
+#
+#			_setup_pos_sequence(
+#				_anim.unfocused_animation().position_sequence(),
+#				_anim_player)
+#
+#			_setup_scale_sequence(
+#				_anim.unfocused_animation().scale_sequence(),
+#				_anim_player)
+#
+#			_setup_rotation_sequence(
+#				_anim.unfocused_animation().rotation_sequence(),
+#				_anim_player)
 
 	_anim_player.start()
 
@@ -631,22 +631,22 @@ func _on_EventMerge_timeout() -> void:
 	match next:
 		"idle":
 			_change_state(CardState.IDLE)
-		"focused":
-			_change_state(CardState.FOCUSED)
+#		"focused":
+#			_change_state(CardState.FOCUSED)
 		"activated":
 			_change_state(CardState.ACTIVE)
 		"deactivated":
 			_change_state(CardState.FOCUSED)
-		"unfocused":
-			_change_state(CardState.IDLE)
+#		"unfocused":
+#			_change_state(CardState.IDLE)
 
 	_event_queue.pop_front()
 	_change_anim(next)
 
 
 func _on_MouseArea_mouse_entered() -> void:
-#	if not _interactive or CardEngine.general().is_dragging() or _remove_flag:
-#		return
+	if not _interactive or _remove_flag:
+		return
 
 	z_index = 1
 	_is_focused = true
@@ -656,8 +656,8 @@ func _on_MouseArea_mouse_entered() -> void:
 
 # Unfocus does not work if card is currently focused
 func _on_MouseArea_mouse_exited() -> void:
-#	if not _interactive or CardEngine.general().is_dragging() or _remove_flag:
-#		return
+	if not _interactive or _remove_flag:
+		return
 
 	z_index = 0
 	_is_focused = false
@@ -668,22 +668,22 @@ func _on_MouseArea_mouse_exited() -> void:
 
 
 func _on_MouseArea_pressed() -> void:
-#	if not _interactive or CardEngine.general().is_dragging() or _remove_flag:
-#		return
+	if not _interactive or _remove_flag:
+		return
 
 	emit_signal("clicked")
 
 
 func _on_MouseArea_button_down() -> void:
-#	if not _interactive or CardEngine.general().is_dragging() or _remove_flag:
-#		return
+	if not _interactive or _remove_flag:
+		return
 
 	_post_event("activated")
 
 
 func _on_MouseArea_button_up() -> void:
-#	if not _interactive or CardEngine.general().is_dragging() or _remove_flag:
-#		return
+	if not _interactive or _remove_flag:
+		return
 
 	_post_event("deactivated")
 

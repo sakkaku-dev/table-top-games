@@ -113,7 +113,6 @@ func start_game() -> void:
 			2: "Player2",
 		}
 
-	screens.hide()
 	game.game_start(players)
 
 func stop_game() -> void:
@@ -123,7 +122,6 @@ func stop_game() -> void:
 	players_ready.clear()
 	players_score.clear()
 	
-	screens.show()
 	game.game_stop()
 
 func restart_game() -> void:
@@ -131,6 +129,7 @@ func restart_game() -> void:
 	start_game()
 
 func _on_Game_game_started() -> void:
+	screens.hide()
 	ui_layer.hide_screen()
 	ui_layer.hide_all()
 	ui_layer.show_back_button()
@@ -146,6 +145,7 @@ func _on_Game_player_dead(player_id: int) -> void:
 			ui_layer.show_message("You lose!")
 
 func _on_Game_game_over(player_id: int) -> void:
+	screens.show()
 	players_ready.clear()
 	
 	if not GameState.online_play:

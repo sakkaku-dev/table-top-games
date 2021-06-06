@@ -11,6 +11,8 @@ enum LayoutMode {GRID, PATH}
 enum FineTuningMode {LINEAR, SYMMETRIC, RANDOM}
 enum AspectMode {KEEP, IGNORE}
 
+export var count_tooltip = false
+
 export(PackedScene) var card_visual: PackedScene = null
 export(PackedScene) var drag_widget: PackedScene = null
 export(NodePath) var in_anchor: NodePath = ""
@@ -24,7 +26,7 @@ var _rng: PseudoRng = PseudoRng.new()
 
 var _layout_mode: int = LayoutMode.GRID
 var _face_up: float = true
-var _board: AbstractBoard = null
+var _board: Board = null
 
 # Grid parameters
 var _grid_card_width: float = 80
@@ -37,7 +39,7 @@ var _grid_expand: bool = false
 
 # Interaction parameters
 var _interactive: bool = true
-var _exclusive: bool = true
+var _exclusive: bool = false
 var _last_only: bool = false
 var _drag_enabled: bool = false
 var _drop_enabled: bool = false
@@ -84,6 +86,7 @@ var _adjust_rot: float = 0.0
 onready var _cards = $DropArea/Cards
 onready var _path = $CardPath
 onready var _drop_area = $DropArea
+onready var _count = $Count
 
 
 func _ready() -> void:
@@ -100,6 +103,8 @@ func _ready() -> void:
 	_transitions.out_anchor.duration = 0.3
 	_transitions.out_anchor.type = Tween.TRANS_QUAD
 	_transitions.out_anchor.easing = Tween.EASE_IN_OUT
+	
+	_count.hide()
 
 
 func store() -> AbstractStore:
@@ -128,7 +133,7 @@ func set_drop_enabled(state: bool) -> void:
 	_drop_enabled = state
 
 
-func set_board(board: AbstractBoard) -> void:
+func set_board(board: Board) -> void:
 	_board = board
 
 
@@ -144,6 +149,8 @@ func _update_container() -> void:
 		return
 
 	_clear()
+	_count.text = str(_store.count())
+	print(_count.text)
 
 	if not in_anchor.is_empty():
 		var anchor = get_node(in_anchor)
@@ -198,23 +205,23 @@ func _update_container() -> void:
 		visual_inst.connect("focused", self, "_on_card_focused", [visual_inst])
 		visual_inst.connect("unfocused", self, "_on_card_unfocused")
 
-		if _board != null:
-			var last_trans := _board.get_last_known_transform(card.ref())
-			if last_trans != null:
-				last_trans = _map_to(last_trans)
-
-				var transi := CardTransitions.new()
-				transi.layout = _transitions.layout
-				transi.out_anchor = _transitions.out_anchor
-
-				transi.in_anchor.enabled = true
-				transi.in_anchor.position = last_trans.pos
-				transi.in_anchor.scale = last_trans.scale
-				transi.in_anchor.rotation = last_trans.rot
-				transi.in_anchor.duration = _transitions.in_anchor.duration
-				transi.in_anchor.type = _transitions.in_anchor.type
-				transi.in_anchor.easing = _transitions.in_anchor.easing
-				visual_inst.set_transitions(transi)
+#		if _board != null:
+#			var last_trans := _board.get_last_known_transform(card.ref())
+#			if last_trans != null:
+#				last_trans = _map_to(last_trans)
+#
+#				var transi := CardTransitions.new()
+#				transi.layout = _transitions.layout
+#				transi.out_anchor = _transitions.out_anchor
+#
+#				transi.in_anchor.enabled = true
+#				transi.in_anchor.position = last_trans.pos
+#				transi.in_anchor.scale = last_trans.scale
+#				transi.in_anchor.rotation = last_trans.rot
+#				transi.in_anchor.duration = _transitions.in_anchor.duration
+#				transi.in_anchor.type = _transitions.in_anchor.type
+#				transi.in_anchor.easing = _transitions.in_anchor.easing
+#				visual_inst.set_transitions(transi)
 
 		if _face_up:
 			visual_inst.set_side(CardUI.CardSide.FRONT)
@@ -477,9 +484,9 @@ func _clear() -> void:
 
 	for child in _cards.get_children():
 		if child.instance() and not _store.has_card(child.instance().ref()):
-			if _board != null:
-				_board.register_last_known_transform(
-					child.instance().ref(), _map_from(child.current_trans(true)))
+#			if _board != null:
+#				_board.register_last_known_transform(
+#					child.instance().ref(), _map_from(child.current_trans(true)))
 
 			child.flag_for_removal()
 
@@ -523,6 +530,9 @@ func _on_card_clicked(card: CardUI) -> void:
 
 
 func _on_card_focused(card: Card) -> void:
+	if count_tooltip:
+		_count.show()
+	
 	if _exclusive:
 		for child in _cards.get_children():
 			if child != card:
@@ -532,6 +542,9 @@ func _on_card_focused(card: Card) -> void:
 
 
 func _on_card_unfocused() -> void:
+	if count_tooltip:
+		_count.hide()
+	
 	if _exclusive:
 		for child in _cards.get_children():
 			child.set_mouse_filter(MOUSE_FILTER_STOP)
@@ -539,3 +552,4 @@ func _on_card_unfocused() -> void:
 
 func _on_DropArea_dropped(card: CardInstance, source: String, on_card: CardInstance) -> void:
 	emit_signal("card_dropped", card, source, on_card)
+

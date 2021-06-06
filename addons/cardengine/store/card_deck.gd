@@ -13,3 +13,7 @@ func fill_random(amount: int, store: AbstractStore, allow_duplicate: bool = fals
 
 		store.add_card(get_card(index).duplicate())
 		selected.append(index)
+
+
+func draw():
+	pass

@@ -36,6 +36,8 @@ autostart = true
 
 [connection signal="button_down" from="AnimContainer/MouseArea" to="." method="_on_MouseArea_button_down"]
 [connection signal="button_up" from="AnimContainer/MouseArea" to="." method="_on_MouseArea_button_up"]
+[connection signal="mouse_entered" from="AnimContainer/MouseArea" to="." method="_on_MouseArea_mouse_entered"]
+[connection signal="mouse_exited" from="AnimContainer/MouseArea" to="." method="_on_MouseArea_mouse_exited"]
 [connection signal="pressed" from="AnimContainer/MouseArea" to="." method="_on_MouseArea_pressed"]
 [connection signal="timeout" from="TransiMerge" to="." method="_on_TransiMerge_timeout"]
 [connection signal="timeout" from="EventMerge" to="." method="_on_EventMerge_timeout"]

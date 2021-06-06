@@ -98,7 +98,7 @@ func cards() -> Array:
 		return _filtered
 
 
-func clear() -> void:
+func clear(emit = true) -> void:
 	_cards.clear()
 	_filtered.clear()
 	_cards_count.clear()
@@ -106,17 +106,19 @@ func clear() -> void:
 	_values.clear()
 	_texts.clear()
 	_filter = null
-	emit_signal("cleared")
-	emit_signal("changed")
+	if emit:
+		emit_signal("cleared")
+		emit_signal("changed")
 
 
-func populate(cards: Array) -> void:
-	clear()
+func populate(cards: Array, emit = true) -> void:
+	clear(emit)
 	
 	_cards = cards.duplicate()
 	_update_stats()
 	_update_filtered()
-	emit_signal("changed")
+	if emit:
+		emit_signal("changed")
 
 #	for id in ids:
 #		add_card(CardInstance.new(db.get_card(id)))

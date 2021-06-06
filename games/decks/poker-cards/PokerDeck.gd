@@ -1,4 +1,4 @@
-extends Node
+extends Deck
 
 class_name PokerDeck
 
@@ -15,19 +15,16 @@ func init_deck() -> Array:
 		
 	return deck
 
-
-func create_node(card: PokerCard) -> Node2D:
-	var node = card_scene.instance()
-	node.poker_card = card
-	return node
-
 func get_ui() -> PackedScene:
 	return card_scene
 
-func create_from_ref(ref) -> PokerCard:
+func create_from_ref(ref) -> Card:
 	var card = PokerCard.new()
 	var suit = int(ref.substr(0, 1))
 	var value = int(ref.substr(1))
 	card.suit = suit
 	card.value = value
 	return card
+
+func dummy_card() -> Card:
+	return PokerCard.new()
