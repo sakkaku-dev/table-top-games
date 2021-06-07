@@ -1,19 +1,21 @@
 extends Board
 
-var deck_type = PokerDeck.new()
-
-var hands = {}
-
-var deck_store = CardPile.new()
-var hand_store = CardHand.new()
-var discard_store = CardPile.new()
-
 onready var hand_node := $Hand
 onready var discard_node := $DiscardPile
 onready var deck_node := $DeckPile
 
 export var config: Resource = load("res://games/boards/DealAll.tres")
 
+var player_ids = []
+var turn = 0
+var hands = {}
+
+var deck_type = PokerDeck.new()
+
+var deck_store = CardPile.new()
+var hand_store = CardHand.new()
+var discard_store = CardPile.new()
+var player_turn = false
 
 func _ready():
 	hand_node.set_store(hand_store)
@@ -24,22 +26,12 @@ func _ready():
 	discard_node.set_board(self)
 	deck_node.set_board(self)
 
-
-func _get_custom_rpc_methods() -> Array:
-	return [
-		'_play_card_from_player',
-		'_card_removed',
-		'_card_added',
-		'_deck_count',
-		'_draw_card',
-	]
-	
-
 func setup_client() -> void:
 	hand_node.card_visual = deck_type.get_ui()
 	discard_node.card_visual = deck_type.get_ui()
 	deck_node.card_visual = deck_type.get_ui()
 	deck_store.add_card(deck_type.dummy_card())
+	player_turn = false
 
 func setup_server(players: Dictionary) -> void:
 	deck_store.populate(deck_type.init_deck())
@@ -49,7 +41,7 @@ func setup_server(players: Dictionary) -> void:
 
 	sync_cards(discard_store)
 	
-	var player_ids = players.keys()
+	player_ids = players.keys()
 	for id in players:
 		var card_hand = CardHand.new()
 		sync_cards(card_hand, id, "hand")
@@ -64,6 +56,7 @@ func setup_server(players: Dictionary) -> void:
 	
 	deck_store.connect("changed", self, "_sync_deck_count")
 	_sync_deck_count()
+	_next_turn()
 
 func _is_hands_full(max_cards: int) -> bool:
 	if max_cards == -1: return false
@@ -76,9 +69,19 @@ func _is_hands_full(max_cards: int) -> bool:
 	return true
 
 
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'_play_card_from_player',
+		'_card_removed',
+		'_card_added',
+		'_deck_count',
+		'_draw_card',
+		'_set_player_turn',
+	]
+
+
 func _sync_deck_count():
 	OnlineMatch.custom_rpc_sync(self, "_deck_count", [deck_store.count()])
-
 
 func _deck_count(count: int):
 	if count == 0:
@@ -113,14 +116,27 @@ func _card_removed(ref, store_id) -> void:
 
 
 func play_card(card: Card) -> void:
-	OnlineMatch.custom_rpc_id(self, 1, "_play_card_from_player", [OnlineMatch.get_network_unique_id(), card.ref()])
+	if player_turn:
+		OnlineMatch.custom_rpc_id(self, 1, "_play_card_from_player", [OnlineMatch.get_network_unique_id(), card.ref()])
 
 func _play_card_from_player(id, ref) -> void:
 	if hands.has(id):
 		hands[id].play_card(ref, discard_store)
+		_next_turn()
+
+
+func _next_turn():
+	var idx = turn % player_ids.size()
+	OnlineMatch.custom_rpc_sync(self, "_set_player_turn", [player_ids[idx]])
+	turn += 1
+
+func _set_player_turn(player_id: int) -> void:
+	player_turn = OnlineMatch.get_network_unique_id() == player_id
+
 
 func draw_card(dummy_card) -> void:
-	OnlineMatch.custom_rpc_id(self, 1, "_draw_card", [OnlineMatch.get_network_unique_id()])
+	if player_turn:
+		OnlineMatch.custom_rpc_id(self, 1, "_draw_card", [OnlineMatch.get_network_unique_id()])
 
 func _draw_card(id) -> void:
 	if hands.has(id):

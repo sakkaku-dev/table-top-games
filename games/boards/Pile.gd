@@ -1,73 +1,517 @@
-extends Hand
+extends Control
 
-export var random_rotation = false
-export var show_cards = true
+class_name Pile
 
-func _ready():
-	_layout_mode = LayoutMode.GRID
-	_face_up = show_cards
+signal card_clicked(card)
+signal card_dropped(card, source, on_card)
 
-	# Grid parameters
-	_grid_card_width = 80
-	_grid_fixed_width = true
-	_grid_card_spacing = Vector2(0, 1)
-	_grid_halign = HALIGN_CENTER
-	_grid_valign = VALIGN_CENTER
-	_grid_columns = -1
-	_grid_expand = true
+const CARD_NODE_FMT = "card_%s"
 
-	# Interaction parameters
-	_interactive = true
-	_exclusive = false
-	_last_only = true
-	_drag_enabled = false
-	_drop_enabled = false
+enum LayoutMode {GRID, PATH}
+enum FineTuningMode {LINEAR, SYMMETRIC, RANDOM}
+enum AspectMode {KEEP, IGNORE}
 
-	# Path parameters
-	_path_card_width = 200
-	_path_fixed_width = true
-	_path_spacing = 1
+export var count_tooltip = false
 
-	# Position fine tuning
-	_fine_pos = false
-	_fine_pos_mode = FineTuningMode.LINEAR
-	_fine_pos_min = Vector2(0, 0)
-	_fine_pos_max = Vector2(0, 0)
+export(PackedScene) var card_visual: PackedScene = null
+export(PackedScene) var drag_widget: PackedScene = null
+export(NodePath) var in_anchor: NodePath = ""
+export(NodePath) var out_anchor: NodePath = ""
 
-	# Angle fine tuning
-	_fine_angle = random_rotation
-	_fine_angle_mode = FineTuningMode.RANDOM
-	_fine_angle_min = deg2rad(25)
-	_fine_angle_max = deg2rad(-25)
+export var pile_config: Resource
 
-	# Scale fine tuning
-	_fine_scale = false
-	_fine_scale_mode = FineTuningMode.LINEAR
-	_fine_scale_ratio = AspectMode.KEEP
-	_fine_scale_min = Vector2(0, 0)
-	_fine_scale_max = Vector2(0, 0)
+var _store: AbstractStore = null
+var _rng: PseudoRng = PseudoRng.new()
 
-	# Transitions
-	_transitions.layout.duration = 0.1
+var _board: Board = null
+
+# Transitions
+var _transitions: CardTransitions = CardTransitions.new()
+
+onready var _cards = $DropArea/Cards
+onready var _path = $CardPath
+onready var _drop_area = $DropArea
+onready var _count = $Count
+
+
+func _ready() -> void:
+	_drop_area.set_enabled(pile_config.drop_enabled)
+	
+	_transitions.layout.duration = 0.2
 	_transitions.layout.type = Tween.TRANS_QUAD
-	_transitions.layout.easing = Tween.EASE_OUT
+	_transitions.layout.easing = Tween.EASE_IN_OUT
 
-	_transitions.in_anchor.duration = 0.3
+	_transitions.in_anchor.duration = 0.5
 	_transitions.in_anchor.type = Tween.TRANS_BACK
 	_transitions.in_anchor.easing = Tween.EASE_OUT
 
 	_transitions.out_anchor.duration = 0.3
-	_transitions.out_anchor.type = Tween.TRANS_LINEAR
-	_transitions.out_anchor.easing = Tween.EASE_IN
+	_transitions.out_anchor.type = Tween.TRANS_QUAD
+	_transitions.out_anchor.easing = Tween.EASE_IN_OUT
+	
+	_count.hide()
 
-	# Animation
-	_anim = "visible_pile"
-	_adjust_mode = "focused"
-	_adjust_pos_x_mode = "disabled"
-	_adjust_pos_y_mode = "disabled"
-	_adjust_pos = Vector2(0, 0)
-	_adjust_scale_x_mode = "disabled"
-	_adjust_scale_y_mode = "disabled"
-	_adjust_scale = Vector2(0, 0)
-	_adjust_rot_mode = "disabled"
-	_adjust_rot = 0
+
+func store() -> AbstractStore:
+	return _store
+
+
+func set_store(store: AbstractStore) -> void:
+	_store = store
+	_store.connect("changed", self, "_update_container")
+	_update_container()
+
+
+func get_drop_area() -> DropArea:
+	return _drop_area
+
+
+#func set_interactive(state: bool) -> void:
+#	pile_config.interactive = state
+#
+#
+#func set_drag_enabled(state: bool) -> void:
+#	pile_config.drag_enabled = state
+#
+#
+#func set_drop_enabled(state: bool) -> void:
+#	pile_config.drop_enabled = state
+
+
+func set_board(board: Board) -> void:
+	_board = board
+
+
+func _card_clicked(card: CardUI) -> void:
+	pass
+
+
+func _update_container() -> void:
+	if card_visual == null:
+		return
+
+	if _store == null:
+		return
+
+	_clear()
+	_count.text = str(_store.count())
+
+	if not in_anchor.is_empty():
+		var anchor = get_node(in_anchor)
+		if anchor is Node2D:
+			_transitions.in_anchor.enabled = true
+			_transitions.in_anchor.position = anchor.position
+			_transitions.in_anchor.scale = anchor.scale
+			_transitions.in_anchor.rotation = anchor.rotation
+		elif anchor is Control:
+			_transitions.in_anchor.enabled = true
+			_transitions.in_anchor.position = anchor.rect_position
+			_transitions.in_anchor.scale = anchor.rect_scale
+			_transitions.in_anchor.rotation = deg2rad(anchor.rect_rotation)
+
+	if not out_anchor.is_empty():
+		var anchor = get_node(out_anchor)
+		if anchor is Node2D:
+			_transitions.out_anchor.enabled = true
+			_transitions.out_anchor.position = anchor.position
+			_transitions.out_anchor.scale = anchor.scale
+			_transitions.out_anchor.rotation = anchor.rotation
+		elif anchor is Control:
+			_transitions.out_anchor.enabled = true
+			_transitions.out_anchor.position = anchor.rect_position
+			_transitions.out_anchor.scale = anchor.rect_scale
+			_transitions.out_anchor.rotation = deg2rad(anchor.rect_rotation)
+
+	# Adding missing cards
+	for card in _store.cards():
+		if _cards.find_node(CARD_NODE_FMT % card.ref(), false, false) != null:
+			continue
+
+		var visual_inst := card_visual.instance()
+		if not visual_inst is CardUI:
+			printerr("Container visual instance must inherit Card")
+			continue
+
+		visual_inst.name = CARD_NODE_FMT % card.ref()
+		_cards.add_child(visual_inst)
+		if card == null:
+			print("Null card")
+		visual_inst.set_instance(card)
+		visual_inst.set_container(pile_config.name)
+		visual_inst.set_transitions(_transitions)
+		visual_inst.set_interactive(pile_config.interactive)
+		visual_inst.set_drag_enabled(pile_config.drag_enabled)
+		visual_inst.set_drag_widget(drag_widget)
+		visual_inst.set_drop_area(_drop_area)
+#		visual_inst.set_animation(CardEngine.anim().get_animation(_anim))
+		visual_inst.connect("need_removal", self, "_on_need_removal", [visual_inst])
+		visual_inst.connect("clicked", self, "_on_card_clicked", [visual_inst])
+		visual_inst.connect("focused", self, "_on_card_focused", [visual_inst])
+		visual_inst.connect("unfocused", self, "_on_card_unfocused")
+
+#		if _board != null:
+#			var last_trans := _board.get_last_known_transform(card.ref())
+#			if last_trans != null:
+#				last_trans = _map_to(last_trans)
+#
+#				var transi := CardTransitions.new()
+#				transi.layout = _transitions.layout
+#				transi.out_anchor = _transitions.out_anchor
+#
+#				transi.in_anchor.enabled = true
+#				transi.in_anchor.position = last_trans.pos
+#				transi.in_anchor.scale = last_trans.scale
+#				transi.in_anchor.rotation = last_trans.rot
+#				transi.in_anchor.duration = _transitions.in_anchor.duration
+#				transi.in_anchor.type = _transitions.in_anchor.type
+#				transi.in_anchor.easing = _transitions.in_anchor.easing
+#				visual_inst.set_transitions(transi)
+
+		if pile_config.face_up:
+			visual_inst.set_side(CardUI.CardSide.FRONT)
+		else:
+			visual_inst.set_side(CardUI.CardSide.BACK)
+
+	# Sorting according to store order
+	var index = 0
+	for card in _store.cards():
+		var visual = _cards.find_node(CARD_NODE_FMT % card.ref(), false, false)
+		_cards.move_child(visual, index)
+		index += 1
+
+	_setup_last_only()
+	_layout_cards()
+
+
+func _setup_last_only() -> void:
+	if pile_config.interactive and pile_config.last_only:
+		for child in _cards.get_children():
+			child.set_interactive(false)
+			child.set_drag_enabled(false)
+
+		for i in range(_cards.get_child_count() - 1, -1, -1):
+			var card: CardUI = _cards.get_child(i)
+			if not card.is_flagged_for_removal():
+				card.set_interactive(pile_config.interactive)
+				card.set_drag_enabled(pile_config.drag_enabled)
+				return
+
+
+func _layout_cards():
+	var card_index: int = 0
+
+	for child in _cards.get_children():
+		if child is CardUI && not child.is_flagged_for_removal():
+			var trans = CardTransform.new()
+
+			match pile_config.layout_mode:
+				LayoutMode.GRID:
+					_grid_layout(trans, card_index, child.size)
+				LayoutMode.PATH:
+					_path_layout(trans, card_index, child.size)
+
+			_fine_tune(trans, card_index, child.size)
+
+			child.set_root_trans(trans)
+			child.set_adjusted_trans(
+				_adjusted_trans(trans),
+				pile_config.adjust_mode == "focused",
+				pile_config.adjust_mode == "activated")
+			card_index += 1
+
+
+func _grid_layout(trans: CardTransform, grid_cell: int, card_size: Vector2):
+	var width_ratio: float = 0.0
+	var height_adjusted: float = 0.0
+	var row_width: float = 0.0
+	var col_height: float = 0.0
+	var grid_offset: Vector2 = Vector2(0.0, 0.0)
+	var spacing_offset: Vector2 = Vector2(0.0, 0.0)
+	
+	var _grid_fixed_width = pile_config.grid_fixed_width
+	var _grid_card_width = pile_config.grid_card_width
+	var _grid_columns = pile_config.grid_columns
+	var _grid_expand = pile_config.grid_expand
+	var _grid_card_spacing = pile_config.grid_card_spacing
+	var _grid_halign = pile_config.grid_halign
+	var _grid_valign = pile_config.grid_valign
+
+	# Card size
+	if not _grid_fixed_width:
+		if _grid_columns > 0:
+			_grid_card_width = rect_size.x / (_grid_columns * _grid_card_spacing.x)
+		else:
+			_grid_card_width = rect_size.x / (_store.count() * _grid_card_spacing.x)
+
+	width_ratio = _grid_card_width / card_size.x
+	height_adjusted = card_size.y * width_ratio
+
+	# Grid offset
+	if _grid_columns > 0:
+		row_width = _grid_columns * _grid_card_width * _grid_card_spacing.x
+		col_height = ceil(_store.count() / float(_grid_columns)) * height_adjusted * _grid_card_spacing.y
+	else:
+		row_width = _store.count() * _grid_card_width * _grid_card_spacing.x
+		col_height = height_adjusted * _grid_card_spacing.y
+
+	if _grid_expand:
+		if row_width > rect_size.x:
+			rect_min_size.x = row_width
+
+		if col_height > rect_size.y || _grid_columns > 0:
+			rect_min_size.y = col_height
+
+	spacing_offset.x = (_grid_card_width * _grid_card_spacing.x - _grid_card_width) / 2.0
+	spacing_offset.y = (height_adjusted * _grid_card_spacing.y - height_adjusted) / 2.0
+
+	match _grid_halign:
+		HALIGN_LEFT:
+			grid_offset.x = spacing_offset.x
+		HALIGN_CENTER:
+			grid_offset.x = spacing_offset.x + (rect_size.x - row_width) / 2.0
+		HALIGN_RIGHT:
+			grid_offset.x = spacing_offset.x + (rect_size.x - row_width)
+
+	match _grid_valign:
+		VALIGN_TOP:
+			grid_offset.y = spacing_offset.y
+		VALIGN_CENTER:
+			grid_offset.y = spacing_offset.y + (rect_size.y - col_height) / 2.0
+		VALIGN_BOTTOM:
+			grid_offset.y = spacing_offset.y + (rect_size.y - col_height)
+
+	var pos: Vector2 = Vector2(0.0 , 0.0)
+	# Initial pos
+	pos.x = _grid_card_width / 2.0
+	pos.y = height_adjusted / 2.0
+
+	# Cell align pos
+	if _grid_columns > 0:
+		pos.x += _grid_card_width * _grid_card_spacing.x * (grid_cell % _grid_columns)
+		pos.y += height_adjusted * _grid_card_spacing.y * ceil(grid_cell / _grid_columns)
+	else:
+		pos.x += _grid_card_width * _grid_card_spacing.x * grid_cell
+
+	# Grid align pos
+	pos.x += grid_offset.x
+	pos.y += grid_offset.y
+
+	trans.scale = Vector2(width_ratio, width_ratio)
+	trans.pos = pos
+
+
+func _path_layout(trans: CardTransform, card_index: int, card_size: Vector2):
+	var width_ratio: float = 0.0
+	var curve: Curve2D = _path.get_curve()
+	var path_length: float = curve.get_baked_length()
+	var path_offset: float = 0.0
+	var path_offset_delta: float = 0.0
+	
+	var _path_fixed_width = pile_config.path_fixed_width
+	var _path_card_width = pile_config.path_card_width
+	var _path_spacing = pile_config.path_spacing
+
+	if not _path_fixed_width:
+		_path_card_width = path_length / (_store.count() * _path_spacing)
+
+	width_ratio = _path_card_width / card_size.x
+
+	# Path offset
+	path_offset_delta = path_length - _path_card_width
+	path_offset_delta /= _store.count() - 1
+	path_offset = _path_card_width / 2 + path_offset_delta * card_index
+
+	trans.scale =  Vector2(width_ratio, width_ratio)
+	trans.pos = curve.interpolate_baked(path_offset)
+
+
+func _fine_tune(trans: CardTransform, card_index: int, card_size: Vector2):
+	var card_count: float = _store.count() - 1.0
+
+	if pile_config.fine_pos:
+		match pile_config.fine_pos_mode:
+			FineTuningMode.LINEAR:
+				if card_count > 0:
+					trans.pos += lerp(
+						pile_config.fine_pos_min,
+						pile_config.fine_pos_max,
+						card_index / card_count)
+			FineTuningMode.SYMMETRIC:
+				if card_count > 0:
+					trans.pos += lerp(
+						pile_config.fine_pos_min,
+						pile_config.fine_pos_max,
+						abs(((card_index * 2.0) / card_count) - 1.0))
+			FineTuningMode.RANDOM:
+				trans.pos += _rng.random_vec2_range(pile_config.fine_pos_min, pile_config.fine_pos_max)
+
+	if pile_config.fine_angle:
+		match pile_config.fine_angle_mode:
+			FineTuningMode.LINEAR:
+				if card_count > 0:
+					trans.rot += lerp_angle(
+						pile_config.fine_angle_min,
+						pile_config.fine_angle_max,
+						card_index / card_count)
+			FineTuningMode.SYMMETRIC:
+				if card_count > 0:
+					trans.rot += lerp_angle(
+						pile_config.fine_angle_min,
+						pile_config.fine_angle_max,
+						abs(((card_index * 2.0) / card_count) - 1.0))
+			FineTuningMode.RANDOM:
+				trans.rot += _rng.randomf_range(pile_config.fine_angle_min, pile_config.fine_angle_max)
+
+	if pile_config.fine_scale:
+		match pile_config.fine_scale_mode:
+			FineTuningMode.LINEAR:
+				if card_count > 0:
+					trans.scale *= lerp(
+						pile_config.fine_scale_min,
+						pile_config.fine_scale_max,
+						card_index / card_count)
+			FineTuningMode.SYMMETRIC:
+				if card_count > 0:
+					trans.scale *= lerp(
+						pile_config.fine_scale_min,
+						pile_config.fine_scale_max,
+						abs(((card_index * 2.0) / card_count) - 1.0))
+			FineTuningMode.RANDOM:
+				match pile_config.fine_scale_ratio:
+					AspectMode.IGNORE:
+						trans.scale *= _rng.random_vec2_range(pile_config.fine_scale_min, pile_config.fine_scale_max)
+					AspectMode.KEEP:
+						var random_scale = _rng.randomf_range(pile_config.fine_scale_min.x, pile_config.fine_scale_max.x)
+						trans.scale *= Vector2(random_scale, random_scale)
+
+
+func _adjusted_trans(origin: CardTransform) -> CardTransform:
+	var adjusted := CardTransform.new()
+	var has_adjust := false
+
+	adjusted.pos = origin.pos
+	adjusted.scale = origin.scale
+	adjusted.rot = origin.rot
+	
+	var _adjust_pos = pile_config.adjust_pos
+
+	if pile_config.adjust_pos_x_mode == "relative":
+		adjusted.pos.x += _adjust_pos.x
+		has_adjust = true
+	elif pile_config.adjust_pos_x_mode == "absolute":
+		adjusted.pos.x = _adjust_pos.x
+		has_adjust = true
+
+	if pile_config.adjust_pos_y_mode == "relative":
+		adjusted.pos.y += _adjust_pos.y
+		has_adjust = true
+	elif pile_config.adjust_pos_y_mode == "absolute":
+		adjusted.pos.y = _adjust_pos.y
+		has_adjust = true
+		
+	var _adjust_scale = pile_config.adjust_scale
+	
+	if pile_config.adjust_scale_x_mode == "relative":
+		adjusted.scale.x *= _adjust_scale.x
+		has_adjust = true
+	elif pile_config.adjust_scale_x_mode == "absolute":
+		adjusted.scale.x = _adjust_scale.x
+		has_adjust = true
+
+	if pile_config.adjust_scale_y_mode == "relative":
+		adjusted.scale.y *= _adjust_scale.y
+		has_adjust = true
+	elif pile_config.adjust_scale_y_mode == "absolute":
+		adjusted.scale.y = _adjust_scale.y
+		has_adjust = true
+	
+	var _adjust_rot = pile_config.adjust_rot
+	
+	if pile_config.adjust_rot_mode == "relative":
+		adjusted.rot += deg2rad(_adjust_rot)
+		has_adjust = true
+	elif pile_config.adjust_rot_mode == "absolute":
+		adjusted.rot = deg2rad(_adjust_rot)
+		has_adjust = true
+
+	if has_adjust:
+		return adjusted
+	else:
+		return null
+
+
+func _clear() -> void:
+	if _cards == null:
+		return
+
+	for child in _cards.get_children():
+		if child.instance() and not _store.has_card(child.instance().ref()):
+#			if _board != null:
+#				_board.register_last_known_transform(
+#					child.instance().ref(), _map_from(child.current_trans(true)))
+
+			child.flag_for_removal()
+
+			if child.is_focused():
+				_on_card_unfocused()
+
+
+func _map_from(trans: CardTransform) -> CardTransform:
+	var result := CardTransform.new()
+
+	result.pos = trans.pos + rect_position
+	result.scale = trans.scale * rect_scale
+	result.rot = trans.rot + rect_rotation
+
+	return result
+
+
+func _map_to(trans: CardTransform) -> CardTransform:
+	var result := CardTransform.new()
+
+	result.pos = trans.pos - rect_position
+	result.scale = trans.scale / rect_scale
+	result.rot = trans.rot - rect_rotation
+
+	return result
+
+
+func _on_AbstractContainer_resized() -> void:
+	_update_container()
+
+
+func _on_need_removal(card: CardUI) -> void:
+	_cards.remove_child(card)
+	card.queue_free()
+
+
+func _on_card_clicked(card: CardUI) -> void:
+	if pile_config.interactive:
+		_card_clicked(card)
+		emit_signal("card_clicked", card.instance())
+
+
+func _on_card_focused(card: Card) -> void:
+	if count_tooltip:
+		_count.show()
+	
+	if pile_config.exclusive:
+		for child in _cards.get_children():
+			if child != card:
+				child.set_mouse_filter(MOUSE_FILTER_IGNORE)
+			else:
+				child.set_mouse_filter(MOUSE_FILTER_STOP)
+
+
+func _on_card_unfocused() -> void:
+	if count_tooltip:
+		_count.hide()
+	
+	if pile_config.exclusive:
+		for child in _cards.get_children():
+			child.set_mouse_filter(MOUSE_FILTER_STOP)
+
+
+func _on_DropArea_dropped(card: CardInstance, source: String, on_card: CardInstance) -> void:
+	emit_signal("card_dropped", card, source, on_card)
+

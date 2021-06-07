@@ -1,0 +1,37 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://games/boards/PileConfig.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+name = "deck"
+layout_mode = 0
+face_up = false
+grid_card_width = 80.0
+grid_fixed_width = true
+grid_card_spacing = Vector2( 0, 1 )
+interactive = true
+exclusive = false
+last_only = true
+fine_pos = false
+fine_pos_mode = 1
+fine_pos_min = Vector2( 0, -20 )
+fine_pos_max = Vector2( 0, 20 )
+fine_angle = false
+fine_angle_mode = 0
+fine_angle_value = 10.0
+fine_scale = false
+fine_scale_mode = 0
+fine_scale_ratio = 0
+fine_scale_min = Vector2( 0, 0 )
+fine_scale_max = Vector2( 0, 0 )
+anim = "hidden_pile"
+adjust_mode = "focused"
+adjust_pos_x_mode = "disabled"
+adjust_pos_y_mode = "disabled"
+adjust_pos = Vector2( 0, 0 )
+adjust_scale_x_mode = "disabled"
+adjust_scale_y_mode = "disabled"
+adjust_scale = Vector2( 0, 0 )
+adjust_rot_mode = "disabled"
+adjust_rot = 0.0
