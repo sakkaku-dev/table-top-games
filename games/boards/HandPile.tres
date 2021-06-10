@@ -4,8 +4,7 @@
 
 [resource]
 script = ExtResource( 1 )
-name = "hand"
-layout_mode = 0
+name = "Pile"
 face_up = true
 grid_card_width = 80.0
 grid_fixed_width = true
@@ -14,15 +13,11 @@ interactive = true
 exclusive = false
 last_only = false
 fine_pos = true
-fine_pos_mode = 1
 fine_pos_min = Vector2( 0, -20 )
 fine_pos_max = Vector2( 0, 20 )
 fine_angle = true
-fine_angle_mode = 0
 fine_angle_value = 10.0
 fine_scale = false
-fine_scale_mode = 0
-fine_scale_ratio = 0
 fine_scale_min = Vector2( 0, 0 )
 fine_scale_max = Vector2( 0, 0 )
 anim = "hand"

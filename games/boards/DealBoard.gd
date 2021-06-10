@@ -22,10 +22,6 @@ func _ready():
 	discard_node.set_store(discard_store)
 	deck_node.set_store(deck_store)
 	
-	hand_node.set_board(self)
-	discard_node.set_board(self)
-	deck_node.set_board(self)
-
 func setup_client() -> void:
 	hand_node.card_visual = deck_type.get_ui()
 	discard_node.card_visual = deck_type.get_ui()
@@ -71,7 +67,7 @@ func _is_hands_full(max_cards: int) -> bool:
 
 func _get_custom_rpc_methods() -> Array:
 	return [
-		'_play_card_from_player',
+		'_play_cards_from_player',
 		'_card_removed',
 		'_card_added',
 		'_deck_count',
@@ -116,18 +112,26 @@ func _card_removed(ref, store_id) -> void:
 
 
 func play_card(card: Card) -> void:
-	if player_turn:
-		OnlineMatch.custom_rpc_id(self, 1, "_play_card_from_player", [OnlineMatch.get_network_unique_id(), card.ref()])
+	OnlineMatch.custom_rpc_id(self, 1, "_play_cards_from_player", [OnlineMatch.get_network_unique_id(), [card.ref()]])
 
-func _play_card_from_player(id, ref) -> void:
-	if hands.has(id):
-		hands[id].play_card(ref, discard_store)
+func play_cards(cards: Array) -> void:
+	var refs = []
+	for card in cards:
+		refs.append(card.ref())
+	OnlineMatch.custom_rpc_id(self, 1, "_play_cards_from_player", [OnlineMatch.get_network_unique_id(), refs])
+
+func _play_cards_from_player(id, refs) -> void:
+	if hands.has(id) and _current_player_id_turn() == id:
+		for ref in refs:
+			hands[id].play_card(ref, discard_store)
 		_next_turn()
 
+func _current_player_id_turn() -> int:
+	return player_ids[turn % player_ids.size()]
 
 func _next_turn():
-	var idx = turn % player_ids.size()
-	OnlineMatch.custom_rpc_sync(self, "_set_player_turn", [player_ids[idx]])
+	var id = _current_player_id_turn()
+	OnlineMatch.custom_rpc_sync(self, "_set_player_turn", [id])
 	turn += 1
 
 func _set_player_turn(player_id: int) -> void:

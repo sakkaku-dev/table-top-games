@@ -4,7 +4,7 @@ class_name PileConfig
 
 export var name: String = "Pile"
 
-export(Pile.LayoutMode) var layout_mode: int = Pile.LayoutMode.GRID
+#export(Pile.LayoutMode) var layout_mode: int = Pile.LayoutMode.GRID
 export var face_up = true
 
 # Grid parameters
@@ -30,21 +30,21 @@ var path_spacing: float = 0.5
 
 # Position fine tuning
 export var fine_pos: bool = true
-export(Pile.FineTuningMode) var fine_pos_mode = Pile.FineTuningMode.SYMMETRIC
+#export(Pile.FineTuningMode) var fine_pos_mode = Pile.FineTuningMode.SYMMETRIC
 export var fine_pos_min: Vector2 = Vector2(0.0, -20)
 export var fine_pos_max: Vector2 = Vector2(0.0, 20)
 
 # Angle fine tuning
 export var fine_angle: bool = true
-export(Pile.FineTuningMode) var fine_angle_mode = Pile.FineTuningMode.LINEAR
+#export(Pile.FineTuningMode) var fine_angle_mode = Pile.FineTuningMode.LINEAR
 export var fine_angle_value = 10.0
 var fine_angle_min: float = deg2rad(-fine_angle_value)
 var fine_angle_max: float = deg2rad(fine_angle_value)
 
 # Scale fine tuning
 export var fine_scale: bool = false
-export(Pile.FineTuningMode) var fine_scale_mode = Pile.FineTuningMode.LINEAR
-export(Pile.AspectMode) var fine_scale_ratio = Pile.AspectMode.KEEP
+#export(Pile.FineTuningMode) var fine_scale_mode = Pile.FineTuningMode.LINEAR
+#export(Pile.AspectMode) var fine_scale_ratio = Pile.AspectMode.KEEP
 export var fine_scale_min: Vector2 = Vector2(0, 0)
 export var fine_scale_max: Vector2 = Vector2(0, 0)
 

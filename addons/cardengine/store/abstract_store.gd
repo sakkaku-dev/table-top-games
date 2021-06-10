@@ -78,34 +78,34 @@ signal filtered()
 signal sorted()
 signal cleared()
 
-var save_id: String = ""
-var save_name: String = ""
+#var save_id: String = ""
+#var save_name: String = ""
 
 var _cards: Array = []
-var _filtered: Array = []
-var _cards_count: Dictionary = {}
-var _categs: Dictionary = {}
-var _values: Array = []
-var _texts: Array = []
-var _rng: PseudoRng = PseudoRng.new()
-var _filter: Query = null
+#var _filtered: Array = []
+#var _cards_count: Dictionary = {}
+#var _categs: Dictionary = {}
+#var _values: Array = []
+#var _texts: Array = []
+#var _rng: PseudoRng = PseudoRng.new()
+#var _filter: Query = null
 
 
 func cards() -> Array:
-	if _filter == null:
-		return _cards
-	else:
-		return _filtered
+#	if _filter == null:
+	return _cards
+#	else:
+#		return _filtered
 
 
 func clear(emit = true) -> void:
 	_cards.clear()
-	_filtered.clear()
-	_cards_count.clear()
-	_categs.clear()
-	_values.clear()
-	_texts.clear()
-	_filter = null
+#	_filtered.clear()
+#	_cards_count.clear()
+#	_categs.clear()
+#	_values.clear()
+#	_texts.clear()
+#	_filter = null
 	if emit:
 		emit_signal("cleared")
 		emit_signal("changed")
@@ -115,8 +115,8 @@ func populate(cards: Array, emit = true) -> void:
 	clear(emit)
 	
 	_cards = cards.duplicate()
-	_update_stats()
-	_update_filtered()
+#	_update_stats()
+#	_update_filtered()
 	if emit:
 		emit_signal("changed")
 
@@ -124,21 +124,21 @@ func populate(cards: Array, emit = true) -> void:
 #		add_card(CardInstance.new(db.get_card(id)))
 
 
-func populate_all(db: CardDatabase):
-	pass
+#func populate_all(db: CardDatabase):
+#	pass
 #	populate(db, db.cards().keys())
 
 
-func apply_filter(filter: Query) -> void:
-	pass
+#func apply_filter(filter: Query) -> void:
+#	pass
 #	_filter = filter
 #	_update_filtered()
 #	emit_signal("filtered")
 #	emit_signal("changed")
 
 
-func sort(sort_info: Dictionary) -> void:
-	pass
+#func sort(sort_info: Dictionary) -> void:
+#	pass
 #	var sorter = StoreSorter.new(sort_info)
 #	if _filter == null:
 #		_cards.sort_custom(sorter, "sort")
@@ -149,86 +149,86 @@ func sort(sort_info: Dictionary) -> void:
 
 
 func count() -> int:
-	if _filter == null:
-		return _cards.size()
-	else:
-		return _filtered.size()
+#	if _filter == null:
+	return _cards.size()
+#	else:
+#		return _filtered.size()
 
 
-func cards_count() -> Dictionary:
-	return _cards_count
+#func cards_count() -> Dictionary:
+#	return _cards_count
 
 
-func count_for(id: String) -> int:
-	if _cards_count.has(id):
-		return _cards_count[id]
-	else:
-		return 0
+#func count_for(id: String) -> int:
+#	if _cards_count.has(id):
+#		return _cards_count[id]
+#	else:
+#		return 0
 
 
 func is_empty() -> bool:
-	if _filter == null:
-		return _cards.empty()
-	else:
-		return _filtered.empty()
+#	if _filter == null:
+	return _cards.empty()
+#	else:
+#		return _filtered.empty()
 
 
-func has_card(ref) -> bool:
-	var c = _cards
-	if _filter != null:
-		c = _filtered
+#func has_card(ref) -> bool:
+#	var c = _cards
+#	if _filter != null:
+#		c = _filtered
 
-	for card in c:
-		if card.ref() == ref:
-			return true
-
-	return false
-
-
-func get_card(index: int) -> CardInstance:
-	if _filter == null and (index < 0 or index >= _cards.size()):
-		return null
-	if _filter != null and (index < 0 or index >= _filtered.size()):
-		return null
-
-	if _filter == null:
-		return _cards[index]
-	else:
-		return _filtered[index]
+#	for card in c:
+#		if card.ref() == ref:
+#			return true
+#
+#	return false
 
 
-func get_first() -> CardInstance:
-	if _filter == null and _cards.empty():
-		return null
-	if _filter != null and _filtered.empty():
-		return null
+#func get_card(index: int) -> CardInstance:
+#	if _filter == null and (index < 0 or index >= _cards.size()):
+#		return null
+#	if _filter != null and (index < 0 or index >= _filtered.size()):
+#		return null
+#
+#	if _filter == null:
+#	return _cards[index]
+#	else:
+#		return _filtered[index]
 
-	if _filter == null:
-		return _cards.front()
-	else:
-		return _filtered.front()
+
+#func get_first() -> CardInstance:
+#	if _filter == null and _cards.empty():
+#		return null
+#	if _filter != null and _filtered.empty():
+#		return null
+
+#	if _filter == null:
+#	return _cards.front()
+#	else:
+#		return _filtered.front()
 
 
 func get_last() -> CardInstance:
-	if _filter == null and _cards.empty():
-		return null
-	if _filter != null and _filtered.empty():
-		return null
+#	if _filter == null and _cards.empty():
+#		return null
+#	if _filter != null and _filtered.empty():
+#		return null
 
-	if _filter == null:
-		return _cards.back()
-	else:
-		return _filtered.back()
+#	if _filter == null:
+	return _cards.back()
+#	else:
+#		return _filtered.back()
 
 
-func find(id: String) -> Array:
-	var result := []
-
-	for card in _cards:
-		if card.data().id == id:
-			result.append(card)
-
-	return result
+#func find(id: String) -> Array:
+#	var result := []
+#
+#	for card in _cards:
+#		if card.data().id == id:
+#			result.append(card)
+#
+#	return result
 
 
 func find_first(ref) -> CardInstance:
@@ -249,38 +249,38 @@ func find_last(ref) -> CardInstance:
 	return result
 
 
-func categories() -> Dictionary:
-	return _categs
+#func categories() -> Dictionary:
+#	return _categs
 
 
-func get_meta_category(meta: String) -> Dictionary:
-	if not _categs.has(meta):
-		return {}
-
-	return _categs[meta]
-
-
-func values() -> Array:
-	return _values
+#func get_meta_category(meta: String) -> Dictionary:
+#	if not _categs.has(meta):
+#		return {}
+#
+#	return _categs[meta]
 
 
-func texts() -> Array:
-	return _texts
+#func values() -> Array:
+#	return _values
+#
+#
+#func texts() -> Array:
+#	return _texts
 
 
 func add_cards(cards: Array) -> void:
 	for card in cards:
 		_cards.append(card)
-	_update_stats()
-	_update_filtered()
+#	_update_stats()
+#	_update_filtered()
 	emit_signal("cards_added")
 	emit_signal("changed")
 
 
 func add_card(card) -> void:
 	_cards.append(card)
-	_update_stats()
-	_update_filtered()
+#	_update_stats()
+#	_update_filtered()
 	emit_signal("card_added", card.ref())
 	emit_signal("changed")
 
@@ -290,8 +290,8 @@ func remove_card(ref) -> void:
 
 	if index >= 0:
 		_cards.remove(index)
-		_update_stats()
-		_update_filtered()
+#		_update_stats()
+#		_update_filtered()
 		emit_signal("card_removed", ref)
 		emit_signal("changed")
 
@@ -299,8 +299,8 @@ func remove_card(ref) -> void:
 func remove_first(ref = "") -> void:
 	if ref == "":
 		var card = _cards.pop_front()
-		_update_stats()
-		_update_filtered()
+#		_update_stats()
+#		_update_filtered()
 		emit_signal("card_removed", card.ref())
 		emit_signal("changed")
 	else:
@@ -314,8 +314,8 @@ func remove_first(ref = "") -> void:
 func remove_last(ref = "") -> void:
 	if ref == "":
 		var card = _cards.pop_back()
-		_update_stats()
-		_update_filtered()
+#		_update_stats()
+#		_update_filtered()
 		emit_signal("card_removed", card.ref())
 		emit_signal("changed")
 	else:
@@ -337,8 +337,8 @@ func move_card(ref, to: AbstractStore) -> CardInstance:
 	if index >= 0:
 		var card = _cards[index]
 		_cards.remove(index)
-		_update_stats()
-		_update_filtered()
+#		_update_stats()
+#		_update_filtered()
 		emit_signal("card_removed", ref)
 		emit_signal("changed")
 
@@ -349,42 +349,42 @@ func move_card(ref, to: AbstractStore) -> CardInstance:
 	return null
 
 
-func move_random_card(to: AbstractStore) -> CardInstance:
-	return move_card(_rng.random_range(0, count()-1), to)
+#func move_random_card(to: AbstractStore) -> CardInstance:
+#	return move_card(_rng.random_range(0, count()-1), to)
 
 
-func copy_cards(to: AbstractStore) -> void:
-	for card in _cards:
-		to.add_card(CardInstance.new(card.data().duplicate()))
+#func copy_cards(to: AbstractStore) -> void:
+#	for card in _cards:
+#		to.add_card(CardInstance.new(card.data().duplicate()))
+#
+#
+#func copy_card(ref: int, to: AbstractStore) -> CardInstance:
+#	var index: int = _ref2idx(ref)
+#
+#	if index >= 0:
+#		var card = _cards[index]
+#		to.add_card(CardInstance.new(card.data().duplicate()))
+#		return card
+#
+#	return null
 
 
-func copy_card(ref: int, to: AbstractStore) -> CardInstance:
-	var index: int = _ref2idx(ref)
-
-	if index >= 0:
-		var card = _cards[index]
-		to.add_card(CardInstance.new(card.data().duplicate()))
-		return card
-
-	return null
+#func copy_random_card(to: AbstractStore) -> CardInstance:
+#	return copy_card(_rng.random_range(0, _cards.size()-1), to)
 
 
-func copy_random_card(to: AbstractStore) -> CardInstance:
-	return copy_card(_rng.random_range(0, _cards.size()-1), to)
+#func rng() -> PseudoRng:
+#	return _rng
 
 
-func rng() -> PseudoRng:
-	return _rng
-
-
-func keep(count: int) -> void:
-	if count > _cards.size():
-		return
-	_cards.resize(count)
-	_update_stats()
-	_update_filtered()
-	emit_signal("cards_removed")
-	emit_signal("changed")
+#func keep(count: int) -> void:
+#	if count > _cards.size():
+#		return
+#	_cards.resize(count)
+#	_update_stats()
+#	_update_filtered()
+#	emit_signal("cards_removed")
+#	emit_signal("changed")
 
 
 func _ref2idx(ref) -> int:
@@ -399,8 +399,8 @@ func _ref2idx(ref) -> int:
 	return -1
 
 
-func _update_filtered() -> void:
-	_filtered.clear()
+#func _update_filtered() -> void:
+#	_filtered.clear()
 
 #	if _filter == null:
 #		_filtered = _cards.duplicate()
@@ -410,15 +410,15 @@ func _update_filtered() -> void:
 #				_filtered.append(card)
 
 
-func _update_stats() -> void:
-	_update_count()
-	_update_categories()
-	_update_values()
-	_update_texts()
+#func _update_stats() -> void:
+#	_update_count()
+#	_update_categories()
+#	_update_values()
+#	_update_texts()
 
 
-func _update_count() -> void:
-	_cards_count.clear()
+#func _update_count() -> void:
+#	_cards_count.clear()
 
 #	for card in _cards:
 #		var id = card.data().id
@@ -428,8 +428,8 @@ func _update_count() -> void:
 #			_cards_count[id] = 1
 
 
-func _update_categories() -> void:
-	_categs.clear()
+#func _update_categories() -> void:
+#	_categs.clear()
 
 #	for card in _cards:
 #		for meta in card.data().categories():
@@ -447,8 +447,8 @@ func _update_categories() -> void:
 #				}
 
 
-func _update_values() -> void:
-	_values.clear()
+#func _update_values() -> void:
+#	_values.clear()
 
 #	for card in _cards:
 #		for value in card.data().values():
@@ -456,8 +456,8 @@ func _update_values() -> void:
 #				_values.append(value)
 
 
-func _update_texts() -> void:
-	_texts.clear()
+#func _update_texts() -> void:
+#	_texts.clear()
 
 #	for card in _cards:
 #		for text in card.data().texts():

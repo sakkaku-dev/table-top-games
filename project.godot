@@ -192,7 +192,7 @@ _global_script_classes=[ {
 "base": "Control",
 "class": "DropArea",
 "language": "GDScript",
-"path": "res://games/boards/DropArea.gd"
+"path": "res://addons/cardengine/core/drop_area.gd"
 }, {
 "base": "Reference",
 "class": "EffectInstance",

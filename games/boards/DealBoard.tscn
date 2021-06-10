@@ -22,8 +22,8 @@ margin_left = -640.0
 margin_top = -140.0
 margin_right = 640.0
 margin_bottom = 80.0
-count_tooltip = true
 pile_config = ExtResource( 2 )
+select_multiple = true
 
 [node name="DiscardPile" parent="." instance=ExtResource( 3 )]
 anchor_left = 0.5
@@ -48,4 +48,5 @@ margin_bottom = 180.0
 pile_config = ExtResource( 5 )
 
 [connection signal="card_clicked" from="Hand" to="." method="play_card"]
+[connection signal="cards_clicked" from="Hand" to="." method="play_cards"]
 [connection signal="card_clicked" from="DeckPile" to="." method="draw_card"]
