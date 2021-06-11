@@ -1,6 +1,7 @@
 extends Control
 
 signal card_clicked(card)
+signal card_hold(card)
 
 enum LayoutMode {GRID, PATH}
 enum FineTuningMode {LINEAR, SYMMETRIC, RANDOM}
@@ -38,28 +39,16 @@ var fine_angle_min: float = deg2rad(-fine_angle_value)
 var fine_angle_max: float = deg2rad(fine_angle_value)
 
 # Scale fine tuning
-export var fine_scale: bool = false
-export(FineTuningMode) var fine_scale_mode = FineTuningMode.LINEAR
-export(AspectMode) var fine_scale_ratio = AspectMode.KEEP
-export var fine_scale_min: Vector2 = Vector2(0, 0)
-export var fine_scale_max: Vector2 = Vector2(0, 0)
+var fine_scale: bool = false
+var fine_scale_mode = FineTuningMode.LINEAR
+var fine_scale_ratio = AspectMode.KEEP
+var fine_scale_min: Vector2 = Vector2(0, 0)
+var fine_scale_max: Vector2 = Vector2(0, 0)
+
+export var max_active_cards = 0
 
 var _cards = []
 var _rng: PseudoRng = PseudoRng.new()
-
-var _active_cards = []
-
-func get_active_cards() -> Array:
-	var cards = []
-	for c in _active_cards:
-		cards.append(c.instance())
-	return cards
-	
-	
-func clear_active_cards() -> void:
-	for c in _active_cards:
-		c.deactivate()
-	_active_cards.clear()
 
 func update_cards(cards: Array) -> void:
 	if card_visual == null:
@@ -85,6 +74,7 @@ func update_cards(cards: Array) -> void:
 		visual_inst.set_instance(card)
 		visual_inst.set_interactive(interactive)
 		visual_inst.connect("clicked", self, "_on_card_clicked", [visual_inst])
+		visual_inst.connect("hold", self, "_on_card_hold", [visual_inst])
 
 		if face_up:
 			visual_inst.set_side(CardUI.CardSide.FRONT)
@@ -102,14 +92,12 @@ func update_cards(cards: Array) -> void:
 	_layout_cards()
 
 
+func _on_card_hold(card: CardUI) -> void:
+	emit_signal("card_hold", card)
+
+
 func _on_card_clicked(card: CardUI) -> void:
-	if card.is_activated():
-		_active_cards.erase(card)
-		card.deactivate()
-	else:
-		_active_cards.append(card)
-		card.activate()
-	emit_signal("card_clicked", card.instance())
+	emit_signal("card_clicked", card)
 
 
 func _setup_last_only() -> void:

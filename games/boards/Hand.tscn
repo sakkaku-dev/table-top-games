@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://games/boards/Cards.tscn" type="PackedScene" id=1]
+[ext_resource path="res://games/boards/Hand.gd" type="Script" id=2]
+
+[node name="Hand" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Cards" parent="." instance=ExtResource( 1 )]
+
+[connection signal="card_clicked" from="Cards" to="." method="_on_Cards_card_clicked"]
+[connection signal="card_hold" from="Cards" to="." method="_on_Cards_card_hold"]

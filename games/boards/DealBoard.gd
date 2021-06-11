@@ -18,14 +18,14 @@ var discard_store = CardPile.new()
 var player_turn = false
 
 func _ready():
-	hand_node.set_store(hand_store)
-	discard_node.set_store(discard_store)
-	deck_node.set_store(deck_store)
+	hand_node.store = hand_store
+	discard_node.store = discard_store
+	deck_node.store = deck_store
 	
 func setup_client() -> void:
-	hand_node.card_visual = deck_type.get_ui()
-	discard_node.card_visual = deck_type.get_ui()
-	deck_node.card_visual = deck_type.get_ui()
+	hand_node.deck = deck_type
+	discard_node.deck = deck_type
+	deck_node.deck = deck_type
 	deck_store.add_card(deck_type.dummy_card())
 	player_turn = false
 
@@ -111,21 +111,6 @@ func _card_removed(ref, store_id) -> void:
 	store.remove_card(ref)
 
 
-func play_card(card: Card) -> void:
-	OnlineMatch.custom_rpc_id(self, 1, "_play_cards_from_player", [OnlineMatch.get_network_unique_id(), [card.ref()]])
-
-func play_cards(cards: Array) -> void:
-	var refs = []
-	for card in cards:
-		refs.append(card.ref())
-	OnlineMatch.custom_rpc_id(self, 1, "_play_cards_from_player", [OnlineMatch.get_network_unique_id(), refs])
-
-func _play_cards_from_player(id, refs) -> void:
-	if hands.has(id) and _current_player_id_turn() == id:
-		for ref in refs:
-			hands[id].play_card(ref, discard_store)
-		_next_turn()
-
 func _current_player_id_turn() -> int:
 	return player_ids[turn % player_ids.size()]
 
@@ -145,3 +130,16 @@ func draw_card(dummy_card) -> void:
 func _draw_card(id) -> void:
 	if hands.has(id):
 		hands[id].add_card(deck_store.draw())
+
+
+func _on_Hand_cards_played(cards):
+	var refs = []
+	for card in cards:
+		refs.append(card.ref())
+	OnlineMatch.custom_rpc_id(self, 1, "_play_cards_from_player", [OnlineMatch.get_network_unique_id(), refs])
+
+func _play_cards_from_player(id, refs) -> void:
+	if hands.has(id) and _current_player_id_turn() == id:
+		for ref in refs:
+			hands[id].play_card(ref, discard_store)
+		_next_turn()
