@@ -7,7 +7,7 @@ onready var deck_node := $DeckPile
 export var config: Resource = load("res://games/boards/DealAll.tres")
 
 var player_ids = []
-var turn = 0
+var turn = -1
 var hands = {}
 
 var deck_type = PokerDeck.new()

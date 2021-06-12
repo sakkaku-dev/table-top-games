@@ -10,12 +10,11 @@ export var interactive = true
 var store: AbstractStore = null setget _set_store
 var deck: Deck = null setget _set_deck
 
-onready var _cards = $Cards
+onready var _cards := $Cards
 
 func _ready():
-	if _cards:
-		_cards.face_up = face_up
-		set_interactive(interactive)
+	_cards.face_up = face_up
+	set_interactive(interactive)
 
 
 func _set_deck(value: Deck) -> void:

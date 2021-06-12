@@ -39,17 +39,16 @@ var fine_angle_min: float = deg2rad(-fine_angle_value)
 var fine_angle_max: float = deg2rad(fine_angle_value)
 
 # Scale fine tuning
-var fine_scale: bool = false
+var fine_scale: bool = true
 var fine_scale_mode = FineTuningMode.LINEAR
 var fine_scale_ratio = AspectMode.KEEP
-var fine_scale_min: Vector2 = Vector2(0, 0)
-var fine_scale_max: Vector2 = Vector2(0, 0)
+var fine_scale_min: Vector2 = Vector2(1, 1)
+var fine_scale_max: Vector2 = Vector2(1, 1)
 
 export var max_active_cards = 0
 
 var _cards = []
 var _rng: PseudoRng = PseudoRng.new()
-
 
 func update_cards(cards: Array) -> void:
 	if card_visual == null:
