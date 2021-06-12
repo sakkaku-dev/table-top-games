@@ -289,6 +289,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://pickups/Pickup.gd"
 }, {
+"base": "Control",
+"class": "Pile",
+"language": "GDScript",
+"path": "res://games/decks/Pile.gd"
+}, {
 "base": "Card",
 "class": "PokerCard",
 "language": "GDScript",
@@ -431,6 +436,7 @@ _global_script_class_icons={
 "NakamaStorageObjectId": "",
 "NakamaWriteStorageObject": "",
 "Pickup": "",
+"Pile": "",
 "PokerCard": "",
 "PokerDeck": "",
 "PositionSequence": "",

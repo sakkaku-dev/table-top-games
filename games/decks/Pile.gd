@@ -1,5 +1,7 @@
 extends Control
 
+class_name Pile
+
 signal card_clicked(card)
 
 export var face_up = false

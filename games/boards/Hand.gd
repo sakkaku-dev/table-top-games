@@ -1,33 +1,13 @@
-extends Control
+extends Pile
 
 signal cards_played(cards)
-
-var store: AbstractStore = null setget _set_store
-var deck: Deck = null setget _set_deck
 
 export var max_active_cards = 1 setget _set_max_active_cards
 var _active_cards = []
 
-onready var _cards = $Cards
-
 func _set_max_active_cards(value: int) -> void:
 	max_active_cards = value
 	$Cards.max_active_cards = value
-
-func _set_deck(_deck: Deck) -> void:
-	deck = _deck
-	_cards.card_visual = deck.get_ui()
-
-
-func _set_store(_store: AbstractStore) -> void:
-	store = _store
-	store.connect("changed", self, "_update_container")
-	_update_container()
-
-
-func _update_container() -> void:
-	if not store: return
-	_cards.update_cards(store.cards())
 
 
 func _on_Cards_card_clicked(card: CardUI):
@@ -40,8 +20,6 @@ func _on_Cards_card_clicked(card: CardUI):
 		else:
 			_active_cards.append(card)
 			card.activate()
-			
-	print(_active_cards.size())
 
 
 func _on_Cards_card_hold(card: CardUI):

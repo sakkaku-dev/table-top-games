@@ -115,9 +115,9 @@ func _current_player_id_turn() -> int:
 	return player_ids[turn % player_ids.size()]
 
 func _next_turn():
+	turn += 1
 	var id = _current_player_id_turn()
 	OnlineMatch.custom_rpc_sync(self, "_set_player_turn", [id])
-	turn += 1
 
 func _set_player_turn(player_id: int) -> void:
 	player_turn = OnlineMatch.get_network_unique_id() == player_id
@@ -128,11 +128,12 @@ func draw_card(dummy_card) -> void:
 		OnlineMatch.custom_rpc_id(self, 1, "_draw_card", [OnlineMatch.get_network_unique_id()])
 
 func _draw_card(id) -> void:
-	if hands.has(id):
+	if hands.has(id) and _current_player_id_turn() == id:
 		hands[id].add_card(deck_store.draw())
 
 
 func _on_Hand_cards_played(cards):
+	if not player_turn: return
 	var refs = []
 	for card in cards:
 		refs.append(card.ref())
