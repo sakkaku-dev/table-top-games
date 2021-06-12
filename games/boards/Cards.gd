@@ -28,8 +28,8 @@ var _grid_expand: bool = false
 # Position fine tuning
 export var fine_pos: bool = true
 export(FineTuningMode) var fine_pos_mode = FineTuningMode.SYMMETRIC
-export var fine_pos_min: Vector2 = Vector2(0.0, -20)
-export var fine_pos_max: Vector2 = Vector2(0.0, 20)
+export var fine_pos_min: Vector2 = Vector2(0.0, -10)
+export var fine_pos_max: Vector2 = Vector2(0.0, 10)
 
 # Angle fine tuning
 export var fine_angle: bool = true

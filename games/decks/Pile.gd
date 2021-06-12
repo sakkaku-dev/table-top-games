@@ -13,8 +13,9 @@ var deck: Deck = null setget _set_deck
 onready var _cards = $Cards
 
 func _ready():
-	_cards.face_up = face_up
-	set_interactive(interactive)
+	if _cards:
+		_cards.face_up = face_up
+		set_interactive(interactive)
 
 
 func _set_deck(value: Deck) -> void:
@@ -35,6 +36,7 @@ func _update_container() -> void:
 
 func _on_Cards_card_clicked(card: CardUI):
 	emit_signal("card_clicked", card.instance())
+
 
 func set_interactive(value: bool) -> void:
 	_cards.interactive = value

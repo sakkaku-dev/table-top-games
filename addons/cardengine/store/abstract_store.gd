@@ -71,41 +71,22 @@ class StoreSorter:
 
 signal changed()
 signal card_added(ref)
-signal cards_added()
+signal cards_added(refs)
 signal card_removed(ref)
-signal cards_removed()
+signal cards_removed(refs)
 signal filtered()
 signal sorted()
 signal cleared()
 
-#var save_id: String = ""
-#var save_name: String = ""
-
 var _cards: Array = []
-#var _filtered: Array = []
-#var _cards_count: Dictionary = {}
-#var _categs: Dictionary = {}
-#var _values: Array = []
-#var _texts: Array = []
-#var _rng: PseudoRng = PseudoRng.new()
-#var _filter: Query = null
 
 
 func cards() -> Array:
-#	if _filter == null:
 	return _cards
-#	else:
-#		return _filtered
 
 
 func clear(emit = true) -> void:
 	_cards.clear()
-#	_filtered.clear()
-#	_cards_count.clear()
-#	_categs.clear()
-#	_values.clear()
-#	_texts.clear()
-#	_filter = null
 	if emit:
 		emit_signal("cleared")
 		emit_signal("changed")
@@ -115,26 +96,8 @@ func populate(cards: Array, emit = true) -> void:
 	clear(emit)
 	
 	_cards = cards.duplicate()
-#	_update_stats()
-#	_update_filtered()
 	if emit:
 		emit_signal("changed")
-
-#	for id in ids:
-#		add_card(CardInstance.new(db.get_card(id)))
-
-
-#func populate_all(db: CardDatabase):
-#	pass
-#	populate(db, db.cards().keys())
-
-
-#func apply_filter(filter: Query) -> void:
-#	pass
-#	_filter = filter
-#	_update_filtered()
-#	emit_signal("filtered")
-#	emit_signal("changed")
 
 
 #func sort(sort_info: Dictionary) -> void:
@@ -149,86 +112,15 @@ func populate(cards: Array, emit = true) -> void:
 
 
 func count() -> int:
-#	if _filter == null:
 	return _cards.size()
-#	else:
-#		return _filtered.size()
-
-
-#func cards_count() -> Dictionary:
-#	return _cards_count
-
-
-#func count_for(id: String) -> int:
-#	if _cards_count.has(id):
-#		return _cards_count[id]
-#	else:
-#		return 0
 
 
 func is_empty() -> bool:
-#	if _filter == null:
 	return _cards.empty()
-#	else:
-#		return _filtered.empty()
-
-
-#func has_card(ref) -> bool:
-#	var c = _cards
-#	if _filter != null:
-#		c = _filtered
-
-#	for card in c:
-#		if card.ref() == ref:
-#			return true
-#
-#	return false
-
-
-#func get_card(index: int) -> CardInstance:
-#	if _filter == null and (index < 0 or index >= _cards.size()):
-#		return null
-#	if _filter != null and (index < 0 or index >= _filtered.size()):
-#		return null
-#
-#	if _filter == null:
-#	return _cards[index]
-#	else:
-#		return _filtered[index]
-
-
-#func get_first() -> CardInstance:
-#	if _filter == null and _cards.empty():
-#		return null
-#	if _filter != null and _filtered.empty():
-#		return null
-
-#	if _filter == null:
-#	return _cards.front()
-#	else:
-#		return _filtered.front()
 
 
 func get_last() -> CardInstance:
-#	if _filter == null and _cards.empty():
-#		return null
-#	if _filter != null and _filtered.empty():
-#		return null
-
-#	if _filter == null:
 	return _cards.back()
-#	else:
-#		return _filtered.back()
-
-
-#func find(id: String) -> Array:
-#	var result := []
-#
-#	for card in _cards:
-#		if card.data().id == id:
-#			result.append(card)
-#
-#	return result
 
 
 func find_first(ref) -> CardInstance:
@@ -249,58 +141,46 @@ func find_last(ref) -> CardInstance:
 	return result
 
 
-#func categories() -> Dictionary:
-#	return _categs
-
-
-#func get_meta_category(meta: String) -> Dictionary:
-#	if not _categs.has(meta):
-#		return {}
-#
-#	return _categs[meta]
-
-
-#func values() -> Array:
-#	return _values
-#
-#
-#func texts() -> Array:
-#	return _texts
-
-
 func add_cards(cards: Array) -> void:
+	var refs = []
 	for card in cards:
-		_cards.append(card)
-#	_update_stats()
-#	_update_filtered()
-	emit_signal("cards_added")
+		add_card(card)
+		refs.append(card.ref())
+		
+	emit_signal("cards_added", refs)
 	emit_signal("changed")
 
-
-func add_card(card) -> void:
+func add_card(card) -> Card:
 	_cards.append(card)
-#	_update_stats()
-#	_update_filtered()
 	emit_signal("card_added", card.ref())
 	emit_signal("changed")
+	return card
 
 
-func remove_card(ref) -> void:
+func remove_card(ref) -> Card:
 	var index: int = _ref2idx(ref)
 
 	if index >= 0:
+		var card = _cards[index]
 		_cards.remove(index)
-#		_update_stats()
-#		_update_filtered()
 		emit_signal("card_removed", ref)
 		emit_signal("changed")
+		return card
+	return null
+
+func remove_cards(refs) -> Array:
+	var cards = []
+	for ref in refs:
+		var card = remove_card(ref)
+		if card:
+			cards.append(card)
+	emit_signal("cards_removed", refs)
+	return cards
 
 
 func remove_first(ref = "") -> void:
 	if ref == "":
 		var card = _cards.pop_front()
-#		_update_stats()
-#		_update_filtered()
 		emit_signal("card_removed", card.ref())
 		emit_signal("changed")
 	else:
@@ -314,8 +194,6 @@ func remove_first(ref = "") -> void:
 func remove_last(ref = "") -> void:
 	if ref == "":
 		var card = _cards.pop_back()
-#		_update_stats()
-#		_update_filtered()
 		emit_signal("card_removed", card.ref())
 		emit_signal("changed")
 	else:
@@ -326,65 +204,9 @@ func remove_last(ref = "") -> void:
 		remove_card(card.ref())
 
 
-func move_cards(to: AbstractStore) -> void:
-	to.add_cards(cards())
-	clear()
-
-
-func move_card(ref, to: AbstractStore) -> CardInstance:
-	var index: int = _ref2idx(ref)
-
-	if index >= 0:
-		var card = _cards[index]
-		_cards.remove(index)
-#		_update_stats()
-#		_update_filtered()
-		emit_signal("card_removed", ref)
-		emit_signal("changed")
-
-		to.add_card(card)
-
-		return card
-
-	return null
-
-
-#func move_random_card(to: AbstractStore) -> CardInstance:
-#	return move_card(_rng.random_range(0, count()-1), to)
-
-
-#func copy_cards(to: AbstractStore) -> void:
-#	for card in _cards:
-#		to.add_card(CardInstance.new(card.data().duplicate()))
-#
-#
-#func copy_card(ref: int, to: AbstractStore) -> CardInstance:
-#	var index: int = _ref2idx(ref)
-#
-#	if index >= 0:
-#		var card = _cards[index]
-#		to.add_card(CardInstance.new(card.data().duplicate()))
-#		return card
-#
-#	return null
-
-
-#func copy_random_card(to: AbstractStore) -> CardInstance:
-#	return copy_card(_rng.random_range(0, _cards.size()-1), to)
-
-
-#func rng() -> PseudoRng:
-#	return _rng
-
-
-#func keep(count: int) -> void:
-#	if count > _cards.size():
-#		return
-#	_cards.resize(count)
-#	_update_stats()
-#	_update_filtered()
-#	emit_signal("cards_removed")
-#	emit_signal("changed")
+func move_cards(refs, to: AbstractStore) -> void:
+	var cards = remove_cards(refs)
+	to.add_cards(cards)
 
 
 func _ref2idx(ref) -> int:
@@ -393,73 +215,5 @@ func _ref2idx(ref) -> int:
 	for card in _cards:
 		if card.ref() == ref:
 			return search
-
 		search += 1
-
 	return -1
-
-
-#func _update_filtered() -> void:
-#	_filtered.clear()
-
-#	if _filter == null:
-#		_filtered = _cards.duplicate()
-#	else:
-#		for card in _cards:
-#			if _filter.match_card(card.data()):
-#				_filtered.append(card)
-
-
-#func _update_stats() -> void:
-#	_update_count()
-#	_update_categories()
-#	_update_values()
-#	_update_texts()
-
-
-#func _update_count() -> void:
-#	_cards_count.clear()
-
-#	for card in _cards:
-#		var id = card.data().id
-#		if _cards_count.has(id):
-#			_cards_count[id] += 1
-#		else:
-#			_cards_count[id] = 1
-
-
-#func _update_categories() -> void:
-#	_categs.clear()
-
-#	for card in _cards:
-#		for meta in card.data().categories():
-#			var val = card.data().get_category(meta)
-#			if _categs.has(meta):
-#				_categs[meta]["count"] += 1
-#				if _categs[meta]["values"].has(val):
-#					_categs[meta]["values"][val] += 1
-#				else:
-#					_categs[meta]["values"][val] = 1
-#			else:
-#				_categs[meta] = {
-#					"values": {val: 1},
-#					"count": 1,
-#				}
-
-
-#func _update_values() -> void:
-#	_values.clear()
-
-#	for card in _cards:
-#		for value in card.data().values():
-#			if not _values.has(value):
-#				_values.append(value)
-
-
-#func _update_texts() -> void:
-#	_texts.clear()
-
-#	for card in _cards:
-#		for text in card.data().texts():
-#			if not _texts.has(text):
-#				_texts.append(text)

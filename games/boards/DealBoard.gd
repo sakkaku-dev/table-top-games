@@ -35,8 +35,6 @@ func setup_server(players: Dictionary) -> void:
 	
 	hands = {}
 
-	sync_cards(discard_store)
-	
 	player_ids = players.keys()
 	for id in players:
 		var card_hand = CardHand.new()
@@ -147,6 +145,5 @@ func _on_Hand_cards_played(cards):
 
 func _play_cards_from_player(id, refs) -> void:
 	if hands.has(id) and _current_player_id_turn() == id:
-		for ref in refs:
-			hands[id].play_card(ref, discard_store)
+		hands[id].play_cards(refs, discard_store)
 		_next_turn()
