@@ -86,4 +86,7 @@ func _on_MouseArea_pressed() -> void:
 
 
 func _on_MouseArea_hold():
+	if not interactive:
+		return
+
 	emit_signal("hold")

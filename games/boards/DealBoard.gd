@@ -121,6 +121,12 @@ func _next_turn():
 
 func _set_player_turn(player_id: int) -> void:
 	player_turn = OnlineMatch.get_network_unique_id() == player_id
+	_update_interactive()
+	
+
+func _update_interactive():
+	hand_node.set_interactive(player_turn)
+	deck_node.set_interactive(player_turn)
 
 
 func draw_card(dummy_card) -> void:

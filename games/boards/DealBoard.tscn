@@ -32,6 +32,7 @@ margin_top = -180.0
 margin_right = 100.0
 margin_bottom = 180.0
 face_up = true
+interactive = false
 
 [node name="DeckPile" parent="." instance=ExtResource( 3 )]
 anchor_left = 0.5

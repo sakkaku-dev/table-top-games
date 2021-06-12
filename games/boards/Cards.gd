@@ -11,7 +11,7 @@ const CARD_NODE_FMT = "card_%s"
 
 export var last_only = false
 export var face_up = true
-export var interactive = true
+export var interactive = true setget _set_interactive
 var layout_mode: int = LayoutMode.GRID
 
 var card_visual: PackedScene = null
@@ -49,6 +49,7 @@ export var max_active_cards = 0
 
 var _cards = []
 var _rng: PseudoRng = PseudoRng.new()
+
 
 func update_cards(cards: Array) -> void:
 	if card_visual == null:
@@ -91,7 +92,6 @@ func update_cards(cards: Array) -> void:
 	_setup_last_only()
 	_layout_cards()
 
-
 func _on_card_hold(card: CardUI) -> void:
 	emit_signal("card_hold", card)
 
@@ -100,13 +100,15 @@ func _on_card_clicked(card: CardUI) -> void:
 	emit_signal("card_clicked", card)
 
 
+func _set_interactive(value: bool) -> void:
+	interactive = value
+	for c in get_children():
+		c.set_interactive(value)
+
 func _setup_last_only() -> void:
 	if interactive and last_only:
 		for child in get_children():
 			child.set_interactive(false)
-
-		for i in range(get_child_count() - 1, -1, -1):
-			var card: CardUI = get_child(i)
 
 func _clear_unused(cards: Array):
 	for child in get_children():
