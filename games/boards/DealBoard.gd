@@ -4,7 +4,7 @@ onready var hand_node := $Hand
 onready var discard_node := $DiscardPile
 onready var deck_node := $DeckPile
 
-export var config: Resource = load("res://games/boards/DealAll.tres")
+export var deal_count = 5
 
 const ACTIVE_TURN_OFFSET = 40
 
@@ -44,7 +44,7 @@ func setup_server(players: Dictionary) -> void:
 		hands[id] = card_hand
 	
 	var count = 0
-	while not _is_hands_full(config.deal_cards) and deck_store.count() > 0:
+	while not _is_hands_full(deal_count) and deck_store.count() > 0:
 		var idx = count % player_ids.size()
 		var id = player_ids[idx]
 		hands[id].add_card(deck_store.draw())

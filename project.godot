@@ -179,11 +179,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/cardengine/ui/databases_ui.gd"
 }, {
-"base": "Resource",
-"class": "DealConfig",
-"language": "GDScript",
-"path": "res://games/boards/DealConfig.gd"
-}, {
 "base": "Reference",
 "class": "Deck",
 "language": "GDScript",
@@ -414,7 +409,6 @@ _global_script_class_icons={
 "ContainersUi": "",
 "DatabaseManager": "",
 "DatabasesUi": "",
-"DealConfig": "",
 "Deck": "",
 "DropArea": "",
 "EffectInstance": "",
