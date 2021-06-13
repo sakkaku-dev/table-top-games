@@ -287,7 +287,7 @@ _global_script_classes=[ {
 "base": "KinematicBody2D",
 "class": "Pickup",
 "language": "GDScript",
-"path": "res://pickups/Pickup.gd"
+"path": "res://unused/pickups/Pickup.gd"
 }, {
 "base": "Control",
 "class": "Pile",
