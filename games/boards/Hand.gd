@@ -13,11 +13,11 @@ func _set_max_active_cards(value: int) -> void:
 func _on_Cards_card_clicked(card: CardUI):
 	if max_active_cards <= 1:
 		emit_signal("cards_played", [card.instance()])
-	elif _active_cards.size() < max_active_cards:
+	else:
 		if card.is_activated():
 			_active_cards.erase(card)
 			card.deactivate()
-		else:
+		elif _active_cards.size() < max_active_cards:
 			_active_cards.append(card)
 			card.activate()
 
