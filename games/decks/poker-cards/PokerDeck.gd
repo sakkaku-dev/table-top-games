@@ -12,7 +12,13 @@ func init_deck() -> Array:
 			card.value = i
 			card.suit = suit
 			deck.append(card)
-		
+	
+	var joker = create_from_ref(str(PokerCard.Suit.CLUB) + "13")
+	deck.append(joker)
+
+	joker = create_from_ref(str(PokerCard.Suit.SPADE) + "13")
+	deck.append(joker)
+	
 	return deck
 
 func get_ui() -> PackedScene:
