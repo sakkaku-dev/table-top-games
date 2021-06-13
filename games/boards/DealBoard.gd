@@ -71,6 +71,8 @@ func _get_custom_rpc_methods() -> Array:
 		'_deck_count',
 		'_draw_card',
 		'_set_player_turn',
+		'_pick_up_discarded',
+		'_end_turn',
 	]
 
 
@@ -146,4 +148,21 @@ func _on_Hand_cards_played(cards):
 func _play_cards_from_player(id, refs) -> void:
 	if hands.has(id) and _current_player_id_turn() == id:
 		hands[id].play_cards(refs, discard_store)
+
+
+func _on_DiscardPile_clicked():
+	if player_turn:
+		OnlineMatch.custom_rpc_id(self, 1, "_pick_up_discarded", [OnlineMatch.get_network_unique_id()])
+		
+func _pick_up_discarded(id):
+	if hands.has(id) and _current_player_id_turn() == id:
+		discard_store.move_cards(discard_node.get_last_discarded(), hands[id])
+
+
+func _on_DeckPile_card_hold(card):
+	if player_turn:
+		OnlineMatch.custom_rpc_id(self, 1, "_end_turn", [OnlineMatch.get_network_unique_id()])
+
+func _end_turn(id):
+	if _current_player_id_turn() == id:
 		_next_turn()

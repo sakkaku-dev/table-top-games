@@ -3,6 +3,7 @@ extends Control
 class_name Pile
 
 signal card_clicked(card)
+signal card_hold(card)
 
 export var face_up = false
 export var interactive = true
@@ -39,3 +40,7 @@ func _on_Cards_card_clicked(card: CardUI):
 
 func set_interactive(value: bool) -> void:
 	_cards.interactive = value
+
+
+func _on_Cards_card_hold(card: CardUI):
+	emit_signal("card_hold", card.instance())

@@ -18,3 +18,4 @@ fine_pos = false
 fine_angle = false
 
 [connection signal="card_clicked" from="Cards" to="." method="_on_Cards_card_clicked"]
+[connection signal="card_hold" from="Cards" to="." method="_on_Cards_card_hold"]

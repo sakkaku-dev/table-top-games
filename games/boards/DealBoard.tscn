@@ -44,4 +44,6 @@ margin_right = 344.977
 margin_bottom = 180.0
 
 [connection signal="cards_played" from="Hand" to="." method="_on_Hand_cards_played"]
+[connection signal="clicked" from="DiscardPile" to="." method="_on_DiscardPile_clicked"]
 [connection signal="card_clicked" from="DeckPile" to="." method="draw_card"]
+[connection signal="card_hold" from="DeckPile" to="." method="_on_DeckPile_card_hold"]

@@ -50,6 +50,13 @@ export var max_active_cards = 0
 var _cards = []
 var _rng: PseudoRng = PseudoRng.new()
 
+func get_card_refs() -> Array:
+	var result = []
+	for card in get_children():
+		var ref = card.instance().ref()
+		result.append(ref)
+	return result
+
 func update_cards(cards: Array) -> void:
 	if card_visual == null:
 		return
