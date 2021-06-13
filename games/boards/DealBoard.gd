@@ -12,7 +12,7 @@ var player_ids = []
 var turn = -1
 var hands = {}
 
-var deck_type = PokerDeck.new()
+var deck_type = UnoDeck.new()
 
 var deck_store = CardPile.new()
 var hand_store = CardHand.new()

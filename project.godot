@@ -354,6 +354,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/uuid/uuid.gd"
 }, {
+"base": "Card",
+"class": "UnoCard",
+"language": "GDScript",
+"path": "res://games/decks/uno/UnoCard.gd"
+}, {
+"base": "Deck",
+"class": "UnoDeck",
+"language": "GDScript",
+"path": "res://games/decks/uno/UnoDeck.gd"
+}, {
 "base": "Node",
 "class": "UtilsInstance",
 "language": "GDScript",
@@ -444,6 +454,8 @@ _global_script_class_icons={
 "StepValue": "",
 "UILayer": "",
 "UUID": "",
+"UnoCard": "",
+"UnoDeck": "",
 "UtilsInstance": "",
 "ValueChange": "",
 "ValueMultiplier": "",
