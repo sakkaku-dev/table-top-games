@@ -6,6 +6,8 @@ onready var deck_node := $DeckPile
 
 export var config: Resource = load("res://games/boards/DealAll.tres")
 
+const ACTIVE_TURN_OFFSET = 40
+
 var player_ids = []
 var turn = -1
 var hands = {}
@@ -120,8 +122,14 @@ func _next_turn():
 	OnlineMatch.custom_rpc_sync(self, "_set_player_turn", [id])
 
 func _set_player_turn(player_id: int) -> void:
+	if player_turn:
+		hand_node.rect_position.y += ACTIVE_TURN_OFFSET
+	
 	player_turn = OnlineMatch.get_network_unique_id() == player_id
 	_update_interactive()
+	
+	if player_turn:
+		hand_node.rect_position.y -= ACTIVE_TURN_OFFSET
 	
 
 func _update_interactive():
