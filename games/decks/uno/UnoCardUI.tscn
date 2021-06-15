@@ -9,15 +9,17 @@ script = ExtResource( 3 )
 size = Vector2( 20, 28 )
 
 [node name="Sprite" type="Sprite" parent="AnimContainer/Front" index="0"]
+scale = Vector2( 0.1, 0.1 )
 texture = ExtResource( 2 )
-hframes = 14
+hframes = 13
 vframes = 5
 
 [node name="Sprite" type="Sprite" parent="AnimContainer/Back" index="0"]
+scale = Vector2( 0.1, 0.1 )
 texture = ExtResource( 2 )
-hframes = 14
+hframes = 13
 vframes = 5
-frame = 56
+frame = 54
 
 [node name="MouseArea" parent="AnimContainer" index="3"]
 anchor_left = 0.5

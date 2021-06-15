@@ -7,12 +7,8 @@ var card_scene = preload("res://games/decks/uno/UnoCardUI.tscn")
 func init_deck() -> Array:
 	var deck = []
 	for type in UnoCard.Colour.values():
-		var max_range = 4 if type == UnoCard.Colour.BLACK else 14
+		var max_range = 2 if type == UnoCard.Colour.BLACK else 13
 		for i in range(0, max_range):
-			if type == UnoCard.Colour.BLACK:
-				if i == 0: continue
-			else:
-				if i == 11: continue
 			var card = UnoCard.new()
 			card.value = i
 			card.colour = type
