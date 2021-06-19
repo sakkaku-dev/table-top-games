@@ -99,6 +99,8 @@ func _get_store_by_id(id: int) -> AbstractStore:
 
 func player_cards(id: int, refs: Array) -> Array:
 	if hands.has(id):
+		print(refs)
+		print(hands[id].cards())
 		return hands[id].get_cards(refs)
 	return []
 
@@ -129,3 +131,8 @@ func draw_card() -> Card:
 func discard_cards(cards: Array) -> void:
 	discard_store.add_cards(cards)
 	discard_group.append(cards.size())
+
+func peek_deck(offset = 0) -> Card:
+	var deck = deck_store.cards()
+	return deck[(deck.size() - 1) - offset]
+		

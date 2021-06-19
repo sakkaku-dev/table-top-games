@@ -14,7 +14,7 @@ var turn = -1
 var reverse_turn = false
 
 var deck_type = UnoDeck.new()
-var rule = load("res://games/decks/uno/UnoRule.gd").new()
+var rule: CardRule = load("res://games/decks/uno/UnoRule.gd").new()
 
 var player_turn = false
 
@@ -93,7 +93,7 @@ func draw_card(dummy_card) -> void:
 
 func _draw_card(id) -> void:
 	if player_id_of_turn() == id:
-		card_manager.player_draw(id)
+		rule.draw_card(id)
 
 
 func _on_Hand_cards_played(cards):
@@ -114,7 +114,7 @@ func _on_DiscardPile_clicked():
 		
 func _pick_up_discarded(id):
 	if player_id_of_turn() == id:
-		card_manager.player_pickup(id)
+		rule.pickup_discarded(id)
 
 
 func _on_DeckPile_card_hold(card):
@@ -123,4 +123,4 @@ func _on_DeckPile_card_hold(card):
 
 func _end_turn(id):
 	if player_id_of_turn() == id:
-		next_turn()
+		rule.end_turn(id)
