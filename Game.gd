@@ -42,7 +42,7 @@ func _do_game_setup(players: Dictionary) -> void:
 	
 	board = deal_board.instance()
 	add_child(board)
-	board.setup_client()
+	board.prepare(players)
 	
 #	for player_id in players:
 #		var other_player = Player.instance()
@@ -84,8 +84,7 @@ func _do_game_start() -> void:
 	emit_signal("game_started")
 	
 	# Setup here so the nodes exist on all clients
-	if OnlineMatch.is_network_server():
-		board.setup_server(players_alive)
+	board.setup(players_alive)
 	
 	get_tree().set_pause(false)
 

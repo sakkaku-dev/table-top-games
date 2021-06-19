@@ -2,10 +2,10 @@ extends Node
 
 class_name Board
 
-func setup_client() -> void:
+func prepare(players: Dictionary) -> void:
 	pass
 
-func setup_server(players: Dictionary) -> void:
+func setup(players: Dictionary) -> void:
 	pass
 
 func get_deck_type() -> Deck:

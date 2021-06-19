@@ -92,6 +92,8 @@ func update_cards(cards: Array) -> void:
 	var index = 0
 	for card in cards:
 		var visual = find_node(CARD_NODE_FMT % card.ref(), false, false)
+		if visual == null or index >= get_child_count():
+			continue
 		move_child(visual, index)
 		index += 1
 

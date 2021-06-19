@@ -129,6 +129,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/cardengine/store/card_instance.gd"
 }, {
+"base": "Node",
+"class": "CardManager",
+"language": "GDScript",
+"path": "res://games/boards/CardManager.gd"
+}, {
 "base": "AbstractStore",
 "class": "CardPile",
 "language": "GDScript",
@@ -364,6 +369,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://games/decks/uno/UnoDeck.gd"
 }, {
+"base": "Reference",
+"class": "UnoRule",
+"language": "GDScript",
+"path": "res://games/decks/uno/UnoRule.gd"
+}, {
 "base": "Node",
 "class": "UtilsInstance",
 "language": "GDScript",
@@ -409,6 +419,7 @@ _global_script_class_icons={
 "CardEngineUI": "",
 "CardHand": "",
 "CardInstance": "",
+"CardManager": "",
 "CardPile": "",
 "CardTransform": "",
 "CardTransitions": "",
@@ -456,6 +467,7 @@ _global_script_class_icons={
 "UUID": "",
 "UnoCard": "",
 "UnoDeck": "",
+"UnoRule": "",
 "UtilsInstance": "",
 "ValueChange": "",
 "ValueMultiplier": "",

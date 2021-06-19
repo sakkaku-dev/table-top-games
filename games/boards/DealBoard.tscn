@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://games/boards/DealBoard.gd" type="Script" id=1]
 [ext_resource path="res://games/boards/Hand.tscn" type="PackedScene" id=2]
 [ext_resource path="res://games/decks/Pile.tscn" type="PackedScene" id=3]
 [ext_resource path="res://games/decks/DiscardPile.tscn" type="PackedScene" id=4]
+[ext_resource path="res://games/boards/CardManager.gd" type="Script" id=5]
 
 [node name="DealBoard" type="Control"]
 anchor_right = 1.0
@@ -42,6 +43,9 @@ margin_left = 144.977
 margin_top = -180.0
 margin_right = 344.977
 margin_bottom = 180.0
+
+[node name="CardManager" type="Node" parent="."]
+script = ExtResource( 5 )
 
 [connection signal="cards_played" from="Hand" to="." method="_on_Hand_cards_played"]
 [connection signal="clicked" from="DiscardPile" to="." method="_on_DiscardPile_clicked"]
