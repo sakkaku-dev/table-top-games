@@ -47,7 +47,6 @@ func play_cards(id: int, refs: Array) -> void:
 
 func _can_play_card(card: UnoCard) -> bool:
 	var previous = card_manager.last_played_cards()
-	print(previous)
 	if previous.size() == 0:
 		return true
 	
@@ -67,10 +66,17 @@ func _handle_played_card(card: UnoCard) -> void:
 		next_turn_offset = 2
 	elif card.is_plus_4():
 		_next_player_draw(4)
-		card_board.add_child(color_select.instance())
-		# TODO: change colour
+		_color_select()
+	elif card.is_color_switch():
+		_color_select()
 		
 	card_board.next_turn(next_turn_offset)
+
+func _color_select() -> void:
+	var select_node = color_select.instance()
+	select_node.connect("color_selected", self, "", [])
+	card_board.add_child(select_node)
+	
 
 func _next_player_draw(card_count: int) -> void:
 	var next_player = card_board.player_id_of_turn(1)
