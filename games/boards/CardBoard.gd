@@ -1,19 +1,21 @@
 extends Board
 
+class_name CardBoard
+
 onready var hand_node := $Hand
 onready var discard_node := $DiscardPile
 onready var deck_node := $DeckPile
 onready var card_manager := $CardManager
 
-export var deal_count = 5
-
 const ACTIVE_TURN_OFFSET = 40
 
 var player_ids = []
 var turn = -1
-var hands = {}
+var reverse_turn = false
 
 var deck_type = UnoDeck.new()
+var rule = load("res://games/decks/uno/UnoRule.gd").new()
+
 var player_turn = false
 
 func prepare(players: Dictionary) -> void:
@@ -32,50 +34,42 @@ func prepare(players: Dictionary) -> void:
 
 
 func setup(players: Dictionary) -> void:
+	rule.setup(self, players.keys())
+	
 	if OnlineMatch.is_network_server():
-		card_manager.setup_cards(players.keys(), 7)
 		player_ids = players.keys()
-		_next_turn()
+		next_turn()
 
 
-func _is_hands_full(max_cards: int) -> bool:
-	if max_cards == -1: return false
-	
-	for id in hands:
-		var hand = hands[id]
-		if hand.count() != max_cards:
-			return false
-	
-	return true
+func set_playable_cards(count: int) -> void:
+	hand_node.max_active_cards = count
 
 
 func _get_custom_rpc_methods() -> Array:
 	return [
 		'_play_cards_from_player',
-		'_card_removed',
-		'_card_added',
-		'_deck_count',
 		'_draw_card',
 		'_set_player_turn',
 		'_pick_up_discarded',
 		'_end_turn',
 	]
 
+func reverse_player_turn() -> void:
+	reverse_turn = not reverse_turn
 
-func _deck_count(count: int):
-	if count == 0:
-		deck_node.hide()
-	else:
-		deck_node.show()
+func player_id_of_turn(offset = 0) -> int:
+	return player_ids[_continue_turn(turn, offset) % player_ids.size()]
 
-
-func _current_player_id_turn() -> int:
-	return player_ids[turn % player_ids.size()]
-
-func _next_turn():
-	turn += 1
-	var id = _current_player_id_turn()
+func next_turn(turns = 1):
+	turn = _continue_turn(turn, turns)
+	var id = player_id_of_turn()
 	OnlineMatch.custom_rpc_sync(self, "_set_player_turn", [id])
+
+func _continue_turn(turn: int, offset: int) -> int:
+	if reverse_turn:
+		return turn - offset
+	else:
+		return turn + offset
 
 func _set_player_turn(player_id: int) -> void:
 	if player_turn:
@@ -98,7 +92,7 @@ func draw_card(dummy_card) -> void:
 		OnlineMatch.custom_rpc_id(self, 1, "_draw_card", [OnlineMatch.get_network_unique_id()])
 
 func _draw_card(id) -> void:
-	if _current_player_id_turn() == id:
+	if player_id_of_turn() == id:
 		card_manager.player_draw(id)
 
 
@@ -110,8 +104,8 @@ func _on_Hand_cards_played(cards):
 	OnlineMatch.custom_rpc_id(self, 1, "_play_cards_from_player", [OnlineMatch.get_network_unique_id(), refs])
 
 func _play_cards_from_player(id, refs) -> void:
-	if _current_player_id_turn() == id:
-		card_manager.player_discard(id ,refs)
+	if player_id_of_turn() == id:
+		rule.play_cards(id, refs)
 
 
 func _on_DiscardPile_clicked():
@@ -119,7 +113,7 @@ func _on_DiscardPile_clicked():
 		OnlineMatch.custom_rpc_id(self, 1, "_pick_up_discarded", [OnlineMatch.get_network_unique_id()])
 		
 func _pick_up_discarded(id):
-	if _current_player_id_turn() == id:
+	if player_id_of_turn() == id:
 		card_manager.player_pickup(id)
 
 
@@ -128,5 +122,5 @@ func _on_DeckPile_card_hold(card):
 		OnlineMatch.custom_rpc_id(self, 1, "_end_turn", [OnlineMatch.get_network_unique_id()])
 
 func _end_turn(id):
-	if _current_player_id_turn() == id:
-		_next_turn()
+	if player_id_of_turn() == id:
+		next_turn()

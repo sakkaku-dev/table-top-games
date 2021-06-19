@@ -32,7 +32,6 @@ func setup_cards(player_ids: Array, deal_count: int):
 			hands[id].add_card(deck_store.draw())
 			count += 1
 
-
 func _is_hands_full(max_cards: int) -> bool:
 	if max_cards == -1: return false
 	
@@ -43,13 +42,13 @@ func _is_hands_full(max_cards: int) -> bool:
 	
 	return true
 
+
 func _get_custom_rpc_methods() -> Array:
 	return [
 		'_card_removed',
 		'_card_added',
 		'_store_count',
 	]
-
 
 func _sync_count(id):
 	var store = _get_store_by_id(id)
@@ -98,10 +97,15 @@ func _get_store_by_id(id: int) -> AbstractStore:
 	if id == DISCARD_ID: return discard_store
 	return hands[id]
 
-
-func player_draw(id: int) -> void:
+func player_cards(id: int, refs: Array) -> Array:
 	if hands.has(id):
-		hands[id].add_card(draw_card())
+		return hands[id].get_cards(refs)
+	return []
+
+func player_draw(id: int, amount = 1) -> void:
+	if hands.has(id):
+		for i in range(0, amount):
+			hands[id].add_card(draw_card())
 
 func player_discard(id: int, refs: Array) -> void:
 	if hands.has(id):

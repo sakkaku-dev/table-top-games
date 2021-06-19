@@ -3,7 +3,7 @@
 
 extends Node
 
-var deal_board = preload("res://games/boards/DealBoard.tscn")
+var deal_board = preload("res://games/boards/CardBoard.tscn")
 
 var game_started := false
 var game_over := false

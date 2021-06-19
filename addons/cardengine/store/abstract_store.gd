@@ -217,3 +217,17 @@ func _ref2idx(ref) -> int:
 			return search
 		search += 1
 	return -1
+
+func get_cards(refs: Array) -> Array:
+	var result = []
+	for ref in refs:
+		var idx = _ref2idx(ref)
+		if idx != -1:
+			result.append(_cards[idx])
+	return result
+
+func most_recent_cards(count: int) -> Array:
+	var result = []
+	for i in range(_cards.size() - count, _cards.size()):
+		result.append(_cards[i])
+	return result

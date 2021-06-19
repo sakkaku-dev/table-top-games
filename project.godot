@@ -94,6 +94,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://games/decks/Card.gd"
 }, {
+"base": "Board",
+"class": "CardBoard",
+"language": "GDScript",
+"path": "res://games/boards/CardBoard.gd"
+}, {
 "base": "Reference",
 "class": "CardData",
 "language": "GDScript",
@@ -412,6 +417,7 @@ _global_script_class_icons={
 "AnimationsUi": "",
 "Board": "",
 "Card": "",
+"CardBoard": "",
 "CardData": "",
 "CardDatabase": "",
 "CardDeck": "",
