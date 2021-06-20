@@ -1,3 +1,5 @@
+extends Node
+
 class_name CardRule
 
 func setup(board, players: Array):

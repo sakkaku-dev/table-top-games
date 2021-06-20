@@ -19,6 +19,8 @@ var rule: CardRule = load("res://games/decks/uno/UnoRule.gd").new()
 var player_turn = false
 
 func prepare(players: Dictionary) -> void:
+	add_child(rule)
+	
 	hand_node.deck = deck_type
 	discard_node.deck = deck_type
 	deck_node.deck = deck_type

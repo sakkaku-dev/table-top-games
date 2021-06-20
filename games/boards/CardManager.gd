@@ -99,8 +99,6 @@ func _get_store_by_id(id: int) -> AbstractStore:
 
 func player_cards(id: int, refs: Array) -> Array:
 	if hands.has(id):
-		print(refs)
-		print(hands[id].cards())
 		return hands[id].get_cards(refs)
 	return []
 

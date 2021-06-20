@@ -5,6 +5,8 @@ class_name UnoRule
 var card_board: CardBoard
 var card_manager: CardManager
 
+var color_selected = -1
+var waiting_input = false
 var color_select = preload("res://games/decks/uno/UnoColorSelect.tscn")
 
 func setup(board: CardBoard, players: Array):
@@ -24,7 +26,7 @@ func setup(board: CardBoard, players: Array):
 		card_manager.discard_cards([card])
 
 func end_turn(id: int) -> void:
-	pass
+	card_board.next_turn()
 
 func pickup_discarded(id: int) -> void:
 	pass
@@ -39,23 +41,27 @@ func play_cards(id: int, refs: Array) -> void:
 		print("Only one card can be played: " + str(cards.size()))
 		return
 		
-	if _can_play_card(cards[0]):
+	if not waiting_input and _can_play_card(cards[0]):
 		card_manager.player_discard(id, refs)
-		_handle_played_card(cards[0])
+		_handle_played_card(id, cards[0])
 	else:
 		print("Cannot play card")
 
 func _can_play_card(card: UnoCard) -> bool:
+	if card.is_black_card(): return true
+	
+	if color_selected != -1:
+		return color_selected == card.colour
+
 	var previous = card_manager.last_played_cards()
 	if previous.size() == 0:
 		return true
 	
 	var previous_card: UnoCard = previous[0]
-	return card.is_black_card() or \
-			card.value == previous_card.value or \
+	return card.value == previous_card.value or \
 			card.colour == previous_card.colour
 
-func _handle_played_card(card: UnoCard) -> void:
+func _handle_played_card(id: int, card: UnoCard) -> void:
 	var next_turn_offset = 1
 	
 	if card.is_plus_2():
@@ -66,18 +72,40 @@ func _handle_played_card(card: UnoCard) -> void:
 		next_turn_offset = 2
 	elif card.is_plus_4():
 		_next_player_draw(4)
-		_color_select()
+		_color_select(id)
 	elif card.is_color_switch():
-		_color_select()
+		_color_select(id)
 		
-	card_board.next_turn(next_turn_offset)
-
-func _color_select() -> void:
-	var select_node = color_select.instance()
-	select_node.connect("color_selected", self, "", [])
-	card_board.add_child(select_node)
+	if color_selected != -1:
+		color_selected = -1
 	
+	if not card.is_black_card():
+		card_board.next_turn(next_turn_offset)
 
 func _next_player_draw(card_count: int) -> void:
 	var next_player = card_board.player_id_of_turn(1)
 	card_manager.player_draw(next_player, card_count)
+
+
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'_add_color_select',
+		'_set_color_selected',
+	]
+
+func _color_select(id: int) -> void:
+	waiting_input = true
+	OnlineMatch.custom_rpc_id_sync(self, id, "_add_color_select")
+	
+func _add_color_select() -> void:
+	var select_node = color_select.instance()
+	select_node.connect("color_selected", self, "_send_color_selected")
+	card_board.add_child(select_node)
+	
+func _send_color_selected(color: int) -> void:
+	OnlineMatch.custom_rpc_id(self, 1, "_set_color_selected", [color])
+
+func _set_color_selected(color: int) -> void:
+	color_selected = color
+	waiting_input = false
+	card_board.next_turn()
